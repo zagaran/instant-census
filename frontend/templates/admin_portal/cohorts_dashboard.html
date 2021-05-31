@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}All Cohorts | Instant Census{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="/static/css/cohorts_dashboard.css">
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        var DISABLE_WELCOME = {{ "true" if DISABLE_WELCOME else "false" }};
+        var CUSTOM_WELCOME_OVERRIDE = {{ ('"'|safe + CUSTOM_WELCOME_OVERRIDE + '"'|safe) if CUSTOM_WELCOME_OVERRIDE else "false" }}
+    </script>
+    <script type="text/javascript" src="/static/javascript/cohorts_dashboard.js"></script>
+{% endblock %}
+
+{% block actions %}
+    <li><a href="javascript:void(0)" onclick="launchAddCohort('new')">Add Cohort</a></li>
+{% endblock %}
+
+{% block content %}
+    {% if COHORTS_LIMIT %}
+    <div id="customer-info" class="container section">
+        <div class="row">
+            <div class="col-xs-6">
+                <p>Initiated Cohorts limit on whole deployment: {{ COHORTS_LIMIT }}</p>
+            </div>
+            <div class="col-xs-6 text-right">
+                <p>Current number of initiated Cohorts on whole deployment: {{ total_number_of_initiated_cohorts }}</p>
+                <p>Your contributing initiated Cohorts: {{ admin_number_of_initiated_cohorts }}</p>
+            </div>
+        </div>
+    </div>
+    <hr /><br />
+    {% endif %}
+
+    <div id="cohorts-container" class="container section">
+
+        {% if not non_completed_cohorts and not completed_cohorts %}
+        <div class="alert alert-warning">
+            <b>There are currently no created cohorts.</b>
+            <p>Click "Add Cohort" in the above "Actions" dropdown menu to create a new cohort.</p>
+        </div>
+        {% endif %}
+    
+        {% macro display_cohort(cohort) -%}
+        <div id="{{ cohort['_id'] }}-panel" class="panel panel-default">
+            <div class="panel-heading"><b>Cohort "<span id="{{ cohort._id }}-name">{{ cohort["cohort_name"] }}</span>"</b>
+                <a class="btn btn-delete btn-xs pull-right" href="#delete-cohort-modal-{{ cohort['_id'] }}" data-toggle="modal">Delete Cohort</a>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-6 form-group">
+                        <dl class="dl-horizontal">
+                            <dt>Users (Active):</dt>
+                                <dd>{{ cohort["get_active_user_count"] }} </dd>
+                            <dt>Users (Total):</dt>
+                                <dd>{{ cohort["get_total_user_count"] }} </dd>
+                            <dt>Users (Needs Review):</dt>
+                                <dd>{{ cohort["get_unhandled_user_count"] }} </dd>
+                            <dt>Total Messages:</dt>
+                                <dd>{{ cohort["get_total_message_count"] }} </dd>
+                            <dt>Desired Area Code:</dt>
+                                <dd id="{{ cohort._id }}-area">{{ cohort["area_code"] | default("None specified", True) }}</dd>
+                            <dt>Non-Response Limit:</dt>
+                                <dd id="{{ cohort._id }}-inactive">{{ cohort["inactive_limit"] }}</dd>
+                            <dt>Inactive Time Limit:</dt>
+                                <dd id="{{ cohort._id }}-timelimit">{{ cohort["inactive_time_limit"] }}</dd>
+                            <dt>Welcome Message:</dt>
+                                <dd>
+                                    <span id="{{ cohort._id }}-welcome-message">
+                                        {%- if DISABLE_WELCOME %}
+                                            {{- "[Welcome Message Disabled]" -}}
+                                        {% elif CUSTOM_WELCOME_OVERRIDE %}
+                                            {{- CUSTOM_WELCOME_OVERRIDE -}}
+                                        {% else %}
+                                            {{- cohort["welcome_message"] if cohort["welcome_message"] -}}
+                                        {% endif -%}
+                                    </span>
+                                    {% if not CUSTOM_WELCOME_OVERRIDE and not DISABLE_WELCOME %}
+                                        {{ LEGALLY_REQUIRED }}
+                                    {% endif %}
+                                </dd>
+                            <dt>Numbers:</dt>
+                                <dd>{{ cohort["ic_numbers"] | phonenum_humanize_filter }}</dd>
+                            <dt>Created on:</dt>
+                                <dd>{{ cohort.create_time.strftime("%a, %b %d, %Y %I:%M:%S %p").replace(" 0", " ") }} {{ timezone or "UTC" }}</dd>
+                        </dl>
+                    </div>
+                    <div class="col-xs-6 form-group">
+                        <div class="row form-group">
+                            <div class="col-xs-6">
+                                <a class="btn btn-info btn-block" href="/{{ cohort['_id'] }}/users">Manage Users</a>
+                                <a class="btn btn-info btn-block" href="/{{ cohort['_id'] }}/surveys">Survey Builder</a>
+                            </div>
+                            <div class="col-xs-6">
+                                <a class="btn btn-default btn-block {{ 'disabled' if cohort['status'] == 'completed' }}"
+                                        onclick="launchAddCohort('{{ cohort['_id'] }}')">
+                                    Edit Cohort
+                                </a>
+                                <a class="btn btn-default btn-block"
+                                        onclick="$('#download-data-{{ cohort['_id'] }}').modal('show');">
+                                    Download Data
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-xs-6">
+                            {% if cohort["status"] in ["active"] %}
+                                <span title="Pause Cohort" data-placement="bottom" data-toggle="tooltip">
+                            {% elif cohort["status"] in ["paused", "pending"] %}
+                                <span title="Activate Cohort" data-placement="bottom" data-toggle="tooltip">
+                            {% endif %}
+                                    <a id="{{ cohort['_id'] }}-status"
+                                       class="btn btn-block {{ 'btn-warning' if cohort['status'] == 'paused' else
+                                                               'btn-success' if cohort['status'] == 'active' else
+                                                               'btn-default' if cohort['status'] == 'pending' else
+                                                               'btn-success disabled' if cohort['status'] == 'completed' else
+                                                               'btn-default disabled' }}"
+                                       {{ "href=#" ~ cohort["_id"] ~ "-activate-cohort-modal" if cohort["status"] in ["paused", "pending"] else
+                                          "href=#" ~ cohort["_id"] ~ "-pause-cohort-modal" if cohort["status"] == "active" }}
+                                       data-status="{{ cohort['status'] }}"
+                                       data-toggle="modal">
+                                        Cohort {{ cohort["status"]|title }}
+                                    </a>
+                            {% if cohort["status"] in ["active", "paused", "pending"] %}
+                                </span>
+                            {% endif %}
+                            </div>
+                            <div class="col-xs-6">
+                                <a class="btn btn-block {{ 'btn-success disabled' if cohort['status'] == 'completed' else 'btn-primary' }}"
+                                   href="#mark-cohort-completed-modal-{{ cohort['_id'] }}" data-toggle="modal"
+                                   data-toggle="tooltip" title="Mark Complete To Deactivate">
+                                    {{ "Cohort Completed" if cohort["status"] == "completed" else "Mark As Completed" }}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {%- endmacro %}
+
+        <!-- Non-completed cohorts -->
+        <div id="non-completed-cohorts-container">
+        {% for cohort in non_completed_cohorts %}
+            {{ display_cohort(cohort) }}
+            {# Add modals for each cohort #}
+            {% include 'admin_portal/cohorts_modals/mark_cohort_as_completed.html' %}
+            {% include 'admin_portal/cohorts_modals/pause_cohort.html' %}
+            {% include 'admin_portal/cohorts_modals/activate_cohort.html' %}
+            {% include 'admin_portal/cohorts_modals/download_data.html' %}
+            {% include 'admin_portal/cohorts_modals/delete_cohort.html' %}
+        {% endfor %}
+        </div>
+        <!-- /Non-completed cohorts -->
+
+        <!-- Completed cohorts -->
+        <hr />
+        <h3>Completed Cohorts</h3>
+        {% if completed_cohorts|length > 0 %}
+        <a id="show-completed-cohorts-button" href="javascript:void(0)" onclick="showCompletedCohorts()">
+            <div class="alert alert-default text-center">
+                Click here to show {{ completed_cohorts|length }} completed cohorts.
+            </div>
+        </a>
+        <div id="completed-cohorts-container">
+            {% for cohort in completed_cohorts %}
+            {{ display_cohort(cohort) }}
+            {# Add modals for each cohort #}
+            {% include 'admin_portal/cohorts_modals/download_data.html' %}
+            {% include 'admin_portal/cohorts_modals/delete_cohort.html' %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-default text-center">No completed cohorts</div>
+        {% endif %}
+        <!-- /Completed cohorts -->
+
+    </div>
+
+    {# Add/Edit Cohort modal #}
+    {% include 'admin_portal/cohorts_modals/add_cohort.html' %}
+
+{% endblock %}

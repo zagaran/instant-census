@@ -1,0 +1,205 @@
+/********************
+ * Tags
+ ********************/
+dd, dt {
+    white-space: normal !important;
+}
+dt {
+    font-weight: bold;
+}
+
+
+/********************
+ * IDs
+ ********************/
+#action-box a:hover {
+    text-decoration: none;
+}
+#main-attributes .panel-body {
+    background-color: #fffefa;
+}
+#message-content {
+    resize: none;
+}
+#message-content,
+#message-send-button {
+    height: 54px;
+}
+#message-history {
+    background-color: #fafafa;
+    border: 1px solid #dddddd;
+    border-top: 0 none;
+    max-height: 400px;
+    overflow: auto;
+    padding: 16px 10px 0;
+    position: relative;
+    width: 100%;
+}
+#message-history-header {
+    background-color: #434154;
+    color: #eeeeee;
+    padding: 16px 20px;
+    width: 100%;
+}
+    #message-history-header h4 {
+        margin: 0;
+    }
+#message-send {
+    margin-top: 16px;
+}
+#message-send,
+#user-attributes {
+    margin-bottom: 20px;
+}
+    #user-attributes .panel-body {
+        background-color: #fffefa;
+        overflow: auto;
+    }
+    #user-attributes .dl-horizontal {
+        margin-bottom: 0;
+    }
+/*@media(max-width: 991px) {
+    #main-attributes .dl-horizontal dt,
+    #user-attributes .dl-horizontal dt {
+        float: none;
+        width: auto;
+        clear: none;
+        text-align: left;
+    }
+    #main-attributes .dl-horizontal dd,
+    #user-attributes .dl-horizontal dd {
+        margin-left: 2em;
+    }
+}*/
+
+
+/********************
+ * Classes
+ ********************/
+.active {
+    color: #24a124;
+    font-weight: bold;
+}
+    .active:hover {
+        cursor: pointer;
+    }
+
+.paused {
+    color: #fab61e;
+    font-weight: bold;
+}
+    .paused:hover {
+        cursor: pointer;
+    }
+    
+.inactive {
+    color: #fab61e;
+    font-weight: bold;
+}
+    .inactive:hover {
+        cursor: pointer;
+    }
+    
+.disabled {
+    color: grey;
+    font-weight: bold;
+}
+    .disabled:hover {
+        cursor: not-allowed;
+    }
+    
+.pending {
+    color: grey;
+    font-weight: bold;
+}
+    .pending:hover {
+        cursor: not-allowed;
+    }
+    
+.editable {}
+    .editable:focus {
+        outline-color: #fb8f37;
+        outline-style: solid;
+        outline-width: 2px;
+        background-color: white !important;
+    }
+    .editable:focus:hover {
+        outline-color: #fb8f37;
+        outline-style: solid;
+        outline-width: 2px;
+        background-color: white !important;
+    }
+    .editable:hover {
+        background-color: #faa61e !important;
+    }
+
+.message {
+    border-radius: 5px;
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    position: relative;
+    min-height: 44px;
+    font-family: 'Quicksand', sans-serif;
+    overflow-wrap: break-word;
+}
+.message.from {
+    background-color: #40beba;
+    color: #fff;
+    margin-left: 20%;
+    margin-right: 20px;
+}
+.message.to {
+    background-color: #e5e4e9;
+    color: #363636;
+    margin-left: 20px;
+    margin-right: 20%;
+}
+.message.needs-review {
+    /*border: 2px solid #fa851e;*/
+}
+    .message.needs-review:after {
+        /*border-color: transparent transparent transparent #fa851e;
+        right: -17px;*/
+        left: -30px;
+        top: 16px;
+        width: 12px;
+        height: 12px;
+        background: #fa851e;
+        -moz-border-radius: 50%;
+        -webkit-border-radius: 50%;
+        border-radius: 50%;
+        content: "";
+        position: absolute;
+    }
+.message.to + .message.to,
+.message.from + .message.from {
+  margin-top: -7px;
+}
+.message:before {
+    border-color: transparent transparent transparent #40beba;
+    border-style: solid;
+    border-width: 10px 0 10px 17.3px;
+    content: "";
+    height: 0;
+    top: 13px;
+    right: -15px;
+    position: absolute;
+    width: 0;
+}
+.message.to:before {
+    border-color: transparent #e5e4e9 transparent transparent;
+    border-style: solid;
+    border-width: 10px 17.3px 10px 0;
+    content: "";
+    height: 0;
+    left: -15px;
+    top: 13px;
+    position: absolute;
+    width: 0;
+}
+.time.from {
+    text-align: right;
+}
+.time.to {
+    text-align: left;
+}

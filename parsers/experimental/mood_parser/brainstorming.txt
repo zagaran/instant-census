@@ -1,0 +1,35 @@
+average -> content -> calm -> satisfied -> ok?
+bored -> average
+
+burdened -> overwhelmed
+streesed
+stressed
+stressef
+guilty
+
+anxious
+anxscious
+nervous
+cautious
+
+happy -> good -> relaxed -> optimistic
+delighted -> happy -> in love
+ecstatic -> excited -> happy -> good -> amused
+VS
+depressed -> depression -> sad
+
+distracted -> i cant focus in any i do
+VS
+industrious -> focused
+
+exhausted -> tired -> tiredness
+
+ok -> introspective -> underwhelmed
+
+puzzled
+
+BEING SMART: smarmy
+
+A BioBrick compatible strategy for genetic modification of plants.
+22716313J Biol Eng
+Boyle PM, Burrill DR, Inniss MC, Agapakis CM, Deardon A, Dewerd JG, Gedeon MA, Quinn JY, Paull ML, Raman AM, Theilmann MR, Wang L, Winn JC, Medvedik O, Schellenberg K, Haynes KA, Viel A, Brenner TJ, Church GM, Shah JV, Silver PA.

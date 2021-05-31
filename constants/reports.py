@@ -1,0 +1,1 @@
+CSV_NEWLINE_CHARACTERS = "\r\n"

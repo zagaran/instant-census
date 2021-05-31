@@ -1,0 +1,259 @@
+/********************
+ * Classes
+ ********************/
+.action,
+.conditional {
+    color: #ea4f21;
+}
+.action,
+.conditional,
+.message,
+.question,
+.schedule {
+    padding-bottom: 6px;
+    padding-top: 6px;
+}
+    .action select,
+    .clickable:not(.point),
+    .conditional select,
+    .message select,
+    .question select,
+    .schedule select {
+        color: #000000;
+    }
+    .action:hover:not(.no-hover) .action-button:not(.plus),
+    .conditional:hover:not(.no-hover) .action-button:not(.plus),
+    .message:hover:not(.no-hover) .action-button:not(.plus),
+    .question:hover:not(.no-hover) .action-button:not(.plus),
+    .schedule:hover:not(.no-hover) .action-button:not(.plus) {
+        color: #000000;
+    }
+    .action:hover:not(.no-hover) .delete,
+    .conditional:hover:not(.no-hover) .delete,
+    .message:hover:not(.no-hover) .delete,
+    .question:hover:not(.no-hover) .delete,
+    .schedule:hover:not(.no-hover) .delete {
+        color: #f38585;
+    }
+.manually-run-button {
+    margin-left: 8px;
+}
+.active a {
+    font-weight: bold;
+    color: #00a3a3 !important;
+}
+.action-button {
+    padding-right: 0px;
+    padding-left: 1px;
+    background: transparent;
+    border: none;
+}
+    .action-button:hover:not(.no-hover) {
+        color: #fa851e;
+    }
+    .action-button:not(.plus) {
+        color: #f2f2f2;
+    }
+.attr-values {
+    display: none;
+}
+.button-block {
+    white-space: nowrap;
+}
+.clickable {
+    font-family: 'Quicksand', sans-serif;
+}
+    .clickable:focus {
+        /*margin: 0 -3px;*/
+        padding: 3px;
+        color: #000000;
+    }
+    .clickable:hover:not(.no-hover) {
+        color: #faa61e;
+    }
+.clickable.text {
+    color: #000000;
+    padding: 0px 3px;
+    display: inline-block;
+}
+    .clickable.text:hover:not(.no-hover) {
+        color: #faa61e;
+        cursor: text;
+    }
+    .clickable.text:focus {
+        color: #000000;
+    }
+.clickable.text.message-content {
+    border-bottom: 1px solid #bbbbbb;
+}
+.copySchedule {
+    margin: 0 4px;
+}
+.dropDown {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    border: 0px;
+    border-bottom: 1px solid #bbbbbb;
+    color: inherit;
+    font-family: 'Quicksand', sans-serif;
+    outline: 0px;
+    }
+    .dropDown:focus:hover:not(.no-hover) {
+        color: #000000;
+    }
+    .dropDown:hover:not(.no-hover) {
+        color: #faa61e;
+        cursor: pointer;
+    }
+.no-hover {
+    cursor: default !important;
+}
+.message,
+.question {
+    color: #771691;
+}
+.range-div {
+    display: inline;
+}
+.moveButtons {
+    margin: 0 4px;
+}
+/*.nav-tabs > li > a {
+    color: #00a3a3;
+}
+    .nav-tabs > li.active > a {
+        background-color: #00a3a3;
+        color: white;
+        border: #006666;
+    }*/
+.plus {
+    margin-right: 4px;
+    margin-left: 12px;
+    padding: 0;
+}
+.point {}
+    .point:hover:not(.no-hover) {
+        color: #faa61e;
+        cursor: pointer;
+    }
+.point:not(.clickable) {
+    color: #077c0e;
+}
+.underline {
+    text-decoration: underline;
+}
+.no-underline {
+    text-decoration: none !important;
+    border-bottom: none !important;
+}
+.schedule {
+    color: #19acca;
+    font-weight: bold;
+    font-size: 120%;
+}
+.schedule-toggle {}
+    .schedule-toggle:hover:not(.no-hover) {
+        color: #fa851e;
+        cursor: pointer;
+    }
+.selected {
+    background-color: #00a3a3;
+}
+#surveys {
+    font-family: "Ubuntu Mono", monospace;
+    width: 100%;
+    cursor: default;
+}
+#surveys .alert {
+    font-family: "Quicksand", sans-serif;
+}
+.multiple-choice-answer-choice {
+    margin-bottom: 4px;
+}
+#multiple-choices {
+    max-height: 200px;
+    overflow: auto;
+}
+.upload {
+    position: relative;
+    top: 13px;
+    overflow: hidden;
+    vertical-align: baseline;
+}
+.upload input#userSpreadsheet {
+    position: absolute;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+#space-filler {
+    height: 100%;
+    width: 100%
+}
+/*label.control-label {
+    font-weight: normal;
+}*/
+select:disabled {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+.action-description {
+    margin-bottom: 15px;
+}
+#to-delete {
+    max-height: 500px;
+    overflow: auto;
+}
+.glyphicon-remove {
+    top: 2px;
+}
+#one-time-schedule-error,
+#one-time-schedule-warning {
+    display: none;
+}
+.auto-append {
+    border-bottom: 1px solid #bbbbbb;
+    cursor: text;
+    padding-bottom: 3px;
+    padding-left: 4px;
+}
+
+.preview-text {
+    display: inline-block;
+    position: relative;
+}
+.preview-text .glyphicon-book {
+    display: block;
+    left: 0;
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: FlipH;
+    -ms-filter: "FlipH";
+}
+.message:hover .preview-text .glyphicon-book,
+.question:hover .preview-text .glyphicon-book {
+    color: #0d2a48;
+    opacity: 0.8;
+}
+.preview-text .glyphicon-search {
+    display: block;
+    font-size: 0.6em;
+    left: 0.55em;
+    position: absolute;
+    top: 0.8em;
+    z-index: 2;
+}
+.message:hover .preview-text .glyphicon-search,
+.question:hover .preview-text .glyphicon-search {
+    color: #fa851e;
+}
+
+/********** this block also exists exactly the same way in user_management.css **********/
+#default-value-example {
+    display: none;
+}
+/********** /this block also exists exactly the same way in user_management.css **********/

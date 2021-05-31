@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Errors | Instant Census{% endblock %}
+
+{% block content %}
+<div class="container">
+    <img src="/static/img/ICLogo-dark.png" class="img-responsive img-center" />
+    <div class="error-box">
+        <h2>Whoops.</h2>
+        <br /><br />
+        <p>Looks like the file you are uploading has a few problems. No changes were made to the database.
+            Please resolve the following problems by fixing the rows or removing them and try uploading the file again:</p>
+        {% if errors["bad_phonenumbers"] %}
+            <div class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                Invalid phone numbers. Phone numbers must comprise of 10 digits.
+            </div>
+            <ul>
+            {% for error in bad_phonenumbers %}
+                <li>{{ error }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        {% if errors["existing_users"] %}
+            <div class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                Taken phone numbers. These phone numbers already exist in our system as belonging to another user. 
+            </div>
+            <ul>
+            {% for error in existing_users %}
+                <li>{{ error }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        {% if errors["unknown"] %}
+            <div class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                Unknown errors. These rows contain unknown errors.
+            </div>
+            <ul>
+            {% for error in unknown %}
+                <li>{{ error }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        <p>Send us an email at <a href="mailto:support@instantcensus.com" target="_blank">support@instantcensus.com</a> 
+            if you would like assistance.</p>
+    </div>
+</div>
+{%endblock%}

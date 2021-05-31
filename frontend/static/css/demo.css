@@ -1,0 +1,58 @@
+.container {
+	font-family: Quicksand;
+}
+h1 {
+	font-weight: bold;
+	color: rgb(51,153,153);
+}
+
+h2 {
+	font-weight: bold;
+	color: rgb(51,153,153);
+}
+
+h3 {
+	font-weight: bold;
+	color: rgb(51,153,153);
+}
+
+#text-in-number {
+	font-size: 1.25em;
+}
+
+.text_answers {
+	font-size: 1.5em;
+	font-weight: bold;
+}
+
+
+.loading {
+    font-size: 20px;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+}
+.options b {
+    position: relative;
+    top: 5px;
+}
+.panel-heading h4 {
+    margin: 0;
+}
+.svg-container {
+    height: 100%;
+    position: static;
+    width: 100%;
+}
+
+#demo-svg {
+    height: 500px;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+svg text {
+	font-size: 1.25em !important;
+}

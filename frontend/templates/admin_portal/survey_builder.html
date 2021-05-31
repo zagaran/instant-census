@@ -1,0 +1,1201 @@
+{% extends "base.html" %}
+
+{% block title %}Survey Builder | Instant Census{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="/static/css/libraries/datepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/survey_builder.css">
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        window.COHORT_USER_NUMBERS = {{ COHORT_USER_NUMBERS | safe }};
+        var COHORT_COMPLETED = {{ "true" if COHORT_COMPLETED else "false" }};
+        var DISABLE_LENGTH_RESTRICTION = {{ "true" if DISABLE_LENGTH_RESTRICTION else "false" }};
+        var FORBIDDEN_CUSTOM_ATTRIBUTES = {{ FORBIDDEN_CUSTOM_ATTRIBUTES|safe }};
+        var FORBIDDEN_MULTIPLE_CHOICE_ANSWERS = {{ FORBIDDEN_MULTIPLE_CHOICE_ANSWERS|safe }};
+        var TIMEZONE_SUPPORT = {{ "true" if TIMEZONE_SUPPORT else "false" }};
+        var ANSWER_VALUE = "{{ ANSWER_VALUE }}";
+        var ANSWER_VALUE_DISPLAY = "{{ ANSWER_VALUE_DISPLAY }}";
+        var MULTIPLE_CHOICE_RESEND_TEXT = "{{ MULTIPLE_CHOICE_RESEND_TEXT }}";
+    </script>
+    <script src="/static/javascript/libraries/bootstrap-datepicker.min.js"></script>
+    <script src="/static/javascript/survey_builder.js"></script>
+{% endblock %}
+
+{% block actions %}
+    {% if not COHORT_COMPLETED %}
+        <li><a href="javascript:launchAddSchedule()">Add Schedule</a></li>
+        <li><a href="javascript:launchAddAttribute()">Add User Attribute</a></li>
+    {% endif %}
+    <li><a href="javascript:toggleSyntaxHighlighting()">Toggle Syntax Highlighting</a></li>
+    <li><a href="javascript:printPage('true')">Print Surveys</a></li>
+    <li><a href="javascript:launchCopyAllSchedules('{{ cohort._id }}')">Copy All Schedules</a></li>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% if not schedules %}
+            <div class="alert alert-warning">
+                <b>There are currently no schedules for this cohort.</b>
+                <p>Click "Add Schedule" in the above "Actions" dropdown menu to create a new schedule.</p>
+            </div>
+        {% endif %}
+
+        <div id="surveys" data-syntax-highlighting="on">
+        {% for schedule in schedules %}
+            {{ display_schedule(schedule) }}
+        {% endfor %}
+            <select id="selectWidthCalculator" class="dropDown" style="display: none;">
+                <option id="selectWidthCalculatorOption"></option>
+            </select>
+        </div>
+
+        <form id="preview-form" action="/preview_item" method="post">
+            <input name="text" type="hidden" val="" />
+            <input name="cohort_id" type="hidden" val="" />
+        </form>
+
+        <div id="space-filler">&nbsp;</div>
+
+    </div>
+
+    {% from "base.html" import generate_modal %}
+    <!-- delete item confirmation modal -->
+    {% call generate_modal("confirm-delete",
+                           "Delete Confirmation",
+                           "_none",
+                           "deleteActionAndChildren()",
+                           "Delete",
+                           "_none"
+                          ) %}
+        <input id="primary-delete" type="hidden" />
+        <input id="primary-delete-type" type="hidden" />
+        <input id="primary-delete-parent-type" type="hidden" />
+        <p>Do you really wish to delete this item and its dependencies?</p>
+        <hr />
+        <div id="to-delete"></div>
+    {% endcall %}
+    <!-- manually-run schedule confirmation modal -->
+    {% call generate_modal("manually-run-schedule",
+                           "Manually-run Schedule",
+                           "_none",
+                           "",
+                           "Yes, Manually Run",
+                           "_none"
+                          ) %}
+        <p class="alert alert-warning">
+            <b>WARNING!</b> This action will manually send out this schedule to all active users on this cohort,
+            potentially interrupting users who are in the middle of other schedule/survey flows. This schedule
+            will still run at its originally scheduled time(s) regardless of this action.
+        </p>
+        <p>Are you sure you would like to send this schedule out now?</p>
+    {% endcall %}
+    <!-- test schedule configuration modal -->
+    {% call generate_modal("test-schedule",
+                           "Test Schedule",
+                           "_none",
+                           "",
+                           "Test Schedule",
+                           "_none"
+                          ) %}
+        <label for="test-users">Test Users:</label>
+        <div ng-app='testSchedUsers' ng-controller='testSchedUsersCtrl'>
+            <form>
+                <input auto-complete ui-items="testUsers" ng-model="testUser" id="test-user-input">
+            </form>
+        </div>
+        <br>
+        <div id="test-users">
+        </div>
+        <p class="alert alert-warning">
+            <b>WARNING!</b> This action will manually send out this schedule to the designated test users,
+            potentially interrupting users who are in the middle of other schedule/survey flows. This schedule
+            will still run at its originally scheduled time(s) regardless of this action.
+        </p>
+    {% endcall %}
+    <!-- ********** this block also exists exactly the same way in user_management.html ********** -->
+    <!-- add attribute modal -->
+    {% call generate_modal("add-attribute",
+                           "Add User Attribute",
+                           "_none",
+                           "addUserAttribute()",
+                           "Add User Attribute",
+                           "_none"
+                          ) %}
+        <div class="form-horizontal modal-form row">
+            <div class="form-group">
+                <label for="attribute-name" class="col-xs-3 control-label">Attribute Name:</label>
+                <div class="col-xs-9">
+                    <input id="attribute-name" class="form-control" placeholder="Enter attribute name here" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="default-value" class="col-xs-3 control-label">Default Value:</label>
+                <div class="col-xs-9">
+                    <input id="default-value" class="form-control" placeholder="Enter default value here" />
+                </div>
+            </div>
+            <div class="alert alert-warning">
+                <p>
+                    <b>Note:</b> The default value is the attribute value assigned to a user at creation. It is
+                    <u>strongly</u> encouraged that a non-blank default value is assigned. This is especially
+                    important when this attribute is used in a text message as a custom merge field.
+                </p>
+                <p>
+                    &nbsp;<a id="toggle-default-value-example" class="pull-right" href="javascript:void(0);">View example...</a>
+                </p>
+                <div id="default-value-example">
+                    <p>
+                        <b>For example, consider the following message:</b>
+                        <div class="alert alert-default">
+                            "Do you still live in [[CITY]]?"
+                        </div>
+                        Having the default value "the same city" would yield the following message for users with no
+                        explicit value set for the attribute "CITY":
+                        <div class="alert alert-default">
+                            "Do you still live in the city?"
+                        </div>
+                        However, if the attribute "CITY" had a blank default message, a user with no explicit value set
+                        would be sent the following message instead:
+                        <div class="alert alert-default">
+                            "Do you still live in ?"
+                        </div>
+                    </p>
+                    <p>
+                        Depending on your needs, giving careful thought to the custom attribute default value can vastly
+                        improve your users' experiences.
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% endcall %}
+    <!-- ********** /this block also exists exactly the same way in user_management.html ********** -->
+    <!-- add schedule modal -->
+    {% call generate_modal("add-schedule",
+                           "Add Schedule",
+                           "_none",
+                           "addSchedule()",
+                           "Add Schedule",
+                           "_none"
+                          ) %}
+        <!-- nav tabs -->
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#schedule-recurring" data-subtype="recurring" data-toggle="tab">Recurring</a></li>
+            <li><a href="#schedule-one-time" data-subtype="one_time" data-toggle="tab">One-Time</a></li>
+            <li><a href="#schedule-on-user-creation" data-subtype="on_user_creation" data-toggle="tab">On User Creation</a></li>
+        </ul>
+
+        <input id="schedule-id" type="hidden" value="" />
+        <input id="schedule-subtype" type="hidden" value="recurring" />
+
+        <!-- nav panes -->
+        <div class="tab-content">
+            <div id="schedule-recurring" class="tab-pane fade in active">
+                <div class="alert alert-default action-description">This schedule type sends recurring surveys on the days of week and times specified below.</div>
+                <div id="recurringQuestions" class="form-horizontal row">
+                    <div class="form-group">
+                        <label for="daysOfWeek" class="col-xs-5 control-label">Send survey on:</label>
+                        <div id="daysOfWeek" class="col-xs-4">
+                            <div class="checkbox">
+                                <label>
+                                    <input id="Sunday" type="checkbox" value="Sunday" />
+                                    Every Sunday
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input id="Monday" type="checkbox" value="Monday" />
+                                    Every Monday
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input id="Tuesday" type="checkbox" value="Tuesday" />
+                                    Every Tuesday
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input id="Wednesday" type="checkbox" value="Wednesday" />
+                                    Every Wednesday
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input id="Thursday" type="checkbox" value="Thursday" />
+                                    Every Thursday
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input id="Friday" type="checkbox" value="Friday" />
+                                    Every Friday
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input id="Saturday" type="checkbox" value="Saturday" />
+                                    Every Saturday
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="send-hour-div-recurring" class="form-horizontal row fade in">
+                    <div class="form-group">
+                        <label for="send-hour-recurring" class="col-xs-5 control-label">Send questions at:</label>
+                        <div class="col-xs-3">
+                            <select id="send-hour-recurring" class="form-control" value="12" data-type="hour">
+                                <option value="0">Midnight</option>
+                                <option value="1">1am</option>
+                                <option value="2">2am</option>
+                                <option value="3">3am</option>
+                                <option value="4">4am</option>
+                                <option value="5">5am</option>
+                                <option value="6">6am</option>
+                                <option value="7">7am</option>
+                                <option value="8">8am</option>
+                                <option value="9">9am</option>
+                                <option value="10">10am</option>
+                                <option value="11">11am</option>
+                                <option value="12">Noon</option>
+                                <option value="13">1pm</option>
+                                <option value="14">2pm</option>
+                                <option value="15">3pm</option>
+                                <option value="16">4pm</option>
+                                <option value="17">5pm</option>
+                                <option value="18">6pm</option>
+                                <option value="19">7pm</option>
+                                <option value="20">8pm</option>
+                                <option value="21">9pm</option>
+                                <option value="22">10pm</option>
+                                <option value="23">11pm</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-4">
+                            <label class="control-label">
+                                local time
+                                <span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" data-placement="bottom"
+                                      title="Schedules are deployed to respondents at this indicated time in their respective local timezone"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="schedule-one-time" class="tab-pane fade">
+                <div class="alert alert-default action-description">This schedule type sends one time on the date and time specified below.</div>
+                <div id="oneTimeQuestions" class="form-horizontal row">
+                    <div class="form-group">
+                        <label for="schedule-date" class="col-xs-5 control-label">Send survey on:</label>
+                        <div class="col-xs-3">
+                            <input id="schedule-date" class="form-control" type="text" placeholder="yyyy-mm-dd">
+                        </div>
+                    </div>
+                </div>
+                <div id="send-hour-div-one-time" class="form-horizontal row fade in">
+                    <div class="form-group">
+                        <label for="send-hour-one-time" class="col-xs-5 control-label">Send questions at:</label>
+                        <div class="col-xs-3">
+                            <select id="send-hour-one-time" class="form-control" value="12" data-type="hour">
+                                <option value="0">Midnight</option>
+                                <option value="1">1am</option>
+                                <option value="2">2am</option>
+                                <option value="3">3am</option>
+                                <option value="4">4am</option>
+                                <option value="5">5am</option>
+                                <option value="6">6am</option>
+                                <option value="7">7am</option>
+                                <option value="8">8am</option>
+                                <option value="9">9am</option>
+                                <option value="10">10am</option>
+                                <option value="11">11am</option>
+                                <option value="12">Noon</option>
+                                <option value="13">1pm</option>
+                                <option value="14">2pm</option>
+                                <option value="15">3pm</option>
+                                <option value="16">4pm</option>
+                                <option value="17">5pm</option>
+                                <option value="18">6pm</option>
+                                <option value="19">7pm</option>
+                                <option value="20">8pm</option>
+                                <option value="21">9pm</option>
+                                <option value="22">10pm</option>
+                                <option value="23">11pm</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-4">
+                            <label class="control-label">
+                                local time
+                                <span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" data-placement="bottom"
+                                      title="Schedules are deployed to respondents at this indicated time in their respective local timezone."></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div id="one-time-schedule-warning" class="alert alert-warning fade in">
+                    <b>Warning:</b> This date and time may have already passed for some users depending on their timezone.
+                </div>
+                <div id="one-time-schedule-error" class="alert alert-error fade in">
+                    <b>Error:</b> This date and time has already passed for all users, regardless of timezone.
+                </div>
+            </div>
+
+            <div id="schedule-on-user-creation" class="tab-pane fade">
+                <div class="alert alert-default action-description">This schedule type sends once following user creation.</div>
+            </div>
+
+            <!-- resends -->
+            <hr />
+            <div id="resends" class="form-horizontal row">
+                <div class="form-group">
+                    <div class="radio col-xs-12">
+                        <label><input type="radio" name="resend-radio" value="time">Resend Questions at Specific Time</label>
+                    </div>
+                    <div class="radio col-xs-12">
+                        <label><input type="radio" name="resend-radio" value="hours">Resend Questions after Time Delay</label>
+                    </div>
+                    <div class="radio col-xs-12">
+                        <label><input type="radio" name="resend-radio" value="none">Do not Resend Questions to Non-Responsive Users</label>
+                    </div>
+                </div>
+                <div id="resend-options">
+                    <div class="form-group">
+                        <div class="col-xs-1"></div>
+                        <label for="resend-number" class="col-xs-5 control-label">Resend how many times?</label>
+                        <div class="col-xs-3">
+                            <input id="resend-number" class="form-control" type="number" min="1" max="10" value="1" />
+                        </div>
+                    </div>
+                    <div id="resend-time" class="form-group">
+                        <div class="col-xs-1"></div>
+                        <label for="resend-hour" class="col-xs-5 control-label">Resend at:</label>
+                        <div class="col-xs-3">
+                            <select id="resend-hour" class="form-control" value="12" data-type="hour">
+                                <option value="0">Midnight</option>
+                                <option value="1">1am</option>
+                                <option value="2">2am</option>
+                                <option value="3">3am</option>
+                                <option value="4">4am</option>
+                                <option value="5">5am</option>
+                                <option value="6">6am</option>
+                                <option value="7">7am</option>
+                                <option value="8">8am</option>
+                                <option value="9">9am</option>
+                                <option value="10">10am</option>
+                                <option value="11">11am</option>
+                                <option value="12">Noon</option>
+                                <option value="13">1pm</option>
+                                <option value="14">2pm</option>
+                                <option value="15">3pm</option>
+                                <option value="16">4pm</option>
+                                <option value="17">5pm</option>
+                                <option value="18">6pm</option>
+                                <option value="19">7pm</option>
+                                <option value="20">8pm</option>
+                                <option value="21">9pm</option>
+                                <option value="22">10pm</option>
+                                <option value="23">11pm</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="resend-hours" class="form-group">
+                        <div class="col-xs-1"></div>
+                        <label for="resend-interval" class="col-xs-5 control-label">Hours Between Resends:</label>
+                        <div class="col-xs-3">
+                            <input id="resend-interval" class="form-control" type="number" min="1" value="12" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endcall %}
+
+
+
+    <!-- copy schedule modal -->
+    {# button not accessible if no other cohorts exist #}
+    {% call generate_modal("copy-schedule",
+                           "Copy Schedule",
+                           "_none",
+                           "copySchedule()",
+                           "Copy Schedule",
+                           "_none"
+                          ) %}
+
+        <input id="schedule-id" type="hidden" />
+
+        <p>Select a cohort to copy this schedule into:</p>
+
+        <div class="form-group">
+            <!--<label for="new-question-type" class="col-xs-3 control-label">Cohort Name:</label>-->
+            <!--<div class="col-xs-9">-->
+                <select id="other-cohort" class="form-control">
+                    {% for coh in cohort_names_python %}
+                        <option value="{{ cohort_ids_python[loop.index0] }}">{{ coh }}</td>
+                    {% endfor %}
+                </select>
+            <!--</div>-->
+        </div>
+
+    {% endcall %}
+    
+    <!-- copy all schedules modal -->
+    {# button not accessible if no other cohorts exist #}
+    {% call generate_modal("copy-all-schedules",
+                           "Copy All Schedules",
+                           "_none",
+                           "copyAllSchedules()",
+                           "Copy All Schedule Schedules",
+                           "_none"
+                          ) %}
+
+        <input id="cohort-id-a" type="hidden" />
+
+        <p>Select a cohort to copy these schedules into:</p>
+
+        <div class="form-group">
+            <!--<label for="new-question-type" class="col-xs-3 control-label">Cohort Name:</label>-->
+            <!--<div class="col-xs-9">-->
+                <select id="other-cohort-a" class="form-control">
+                    {% for coh in cohort_names_python %}
+                        <option value="{{ cohort_ids_python[loop.index0] }}">{{ coh }}</td>
+                    {% endfor %}
+                </select>
+            <!--</div>-->
+        </div>
+
+    {% endcall %}
+
+
+
+    <!-- add new item modal -->
+    {% call generate_modal("add-new-item",
+                           "Add New Item",
+                           "_none",
+                           "addItem()",
+                           "Add New Item",
+                           "add-or-edit"
+                          ) %}
+        <!-- nav tabs -->
+        <ul class="nav nav-tabs">
+            <li class="active hide-if-parser hide-if-edit-conditional"><a href="#new-question" data-item-type="send_question" data-toggle="tab">Question</a></li>
+            <li class="hide-if-parser hide-if-edit-question hide-if-edit-conditional"><a href="#new-message" data-item-type="send_message" data-toggle="tab">Message</a></li>
+            <li class="hide-if-edit-question"><a href="#new-conditional" data-item-type="conditional" data-toggle="tab">Conditional</a></li>
+            <li class="hide-if-edit-question hide-if-edit-conditional"><a href="#new-attribute" data-item-type="set_attribute" data-toggle="tab">Set Attribute</a></li>
+        </ul>
+
+        <input type="hidden" value="" id="new-item-parent-id" />
+        <input type="hidden" value="" id="new-item-parent-type" />
+        <input type="hidden" value="" id="item-to-be-edited-id" />
+
+        <!-- nav panes -->
+        <div class="tab-content">
+            <div id="new-question" class="tab-pane fade in active">
+                <div class="alert alert-default action-description">This action adds a new question to send to the user.</div>
+                <div id="newQuestionInputs" class="form-horizontal row">
+                    <div class="form-group">
+                        <label for="new-question-text" class="col-xs-3 control-label">Question Text:</label>
+                        <div class="col-xs-9">
+                            <input id="new-question-text" class="form-control" type="text" placeholder="Type question here" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-question-type" class="col-xs-3 control-label">Question Type:</label>
+                        <div class="col-xs-9">
+                            <select id="new-question-type" class="form-control">
+                                <option value="open_ended">Open-Ended</option>
+                                <option value="yes_or_no_parser">Yes/No</option>
+                                <option value="multiple_choice_parser">Multiple Choice</option>
+                                <option value="number_parser">Numeric</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="multiple-choice-settings" style="display: none" data-parser="multiple_choice_parser">
+                        <hr />
+                        <div class="form-group">
+                            <label for="auto-append" class="col-xs-4 control-label">Append Choices to SMS?</label>
+                            <div class="checkbox col-xs-3">
+                                <label>
+                                    <input id="auto-append" type="checkbox" checked="checked" />
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="number-of-choices" class="col-xs-4 control-label">Number of Choices:</label>
+                            <div class="col-xs-8">
+                                <input id="number-of-choices" class="form-control" type="number" min="1" onchange="updateMultipleChoiceInputs()">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="multiple-choices" class="col-xs-4 control-label">Choices:</label>
+                            <div id="multiple-choices" class="col-xs-8">
+                                <input class="form-control multiple-choice-answer-choice" />
+                            </div>
+                        </div>
+                    </div>
+                    <div id="numeric-settings" style="display: none" data-parser="number_parser">
+                        <hr />
+                        <div class="form-group">
+                            <label for="minimum-answer-value" class="col-xs-4 control-label">Minimum:</label>
+                            <div class="col-xs-3">
+                                <input id="minimum-answer-value" class="form-control" type="number" min="0">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="maximum-answer-value" class="col-xs-4 control-label">Maximum:</label>
+                            <div class="col-xs-3">
+                                <input id="maximum-answer-value" class="form-control" type="number" min="0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="new-message" class="tab-pane fade">
+                <div class="alert alert-default action-description">This action adds a new message to send to the user.</div>
+                <div id="newMessageInputs" class="form-horizontal row">
+                    <div class="form-group">
+                        <label for="new-message-text" class="col-xs-3 control-label">Message Text:</label>
+                        <div class="col-xs-9">
+                            <input id="new-message-text" class="form-control" type="text" placeholder="Type message here" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="new-conditional" class="tab-pane fade">
+                <div class="alert alert-default action-description">This action adds a condition to your survey logic</div>
+                <div class="form-horizontal row">
+                {% if not custom_attributes %}
+                    <div id="new-conditional-input" style="display: none;">
+                {% endif %}
+                        <div class="form-group">
+                            <div class="col-xs-1"></div>
+                            <div class="checkbox col-xs-11">
+                                <label>
+                                    <input id="comparison-is-attribute" type="checkbox" value="comparison_is_attribute" onclick="comparisonIsAttributeChange()">
+                                    Compare to User Attribute
+                                </label>
+                            </div>
+                            <br>
+                            <br>
+                            <label for="conditional-field-new" class="col-xs-1 control-label">If</label>
+                            <div class="col-xs-4">
+                                <select id="conditional-field-new" class="form-control">
+                                    {% for attr in custom_attributes %}
+                                        <option value="{{ attr }}">{{ attr|upper }}</option>
+                                    {% endfor %}
+                                    <option value="{{ ANSWER_VALUE }}" style="display: none;" id="conditional-field-answer">{{ ANSWER_VALUE_DISPLAY }}</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-3">
+                                <select id="conditional-subtype" class="form-control" onchange="conditionalSubtypeChange()">
+                                    <option value="exactly">equals</option>
+                                    <option value="greater">is greater than</option>
+                                    <option value="less">is less than</option>
+                                    <option value="range">is between</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-4">
+                                <div class="non-attr-values">
+                                    <input id="conditional-value-new" class="form-control" placeholder="Value" />
+                                    <select id="conditional-value-new-select" class="form-control" style="display: none;"></select>
+                                </div>
+                                <div class="attr-values">
+                                    <select id="conditional-value-new-attr" class="form-control">
+                                        {% for attr in custom_attributes %}
+                                            <option value="{{ attr }}">{{ attr|upper }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="hidden" id="conditional-range-div">
+                                <div class="col-xs-10"></div>
+                                <label for="conditional-range-new" class="control-label col-xs-1">and</label>
+                                <div class="col-xs-8"></div>
+                                <div class="col-xs-4">
+                                    <div class="non-attr-values">
+                                        <input id="conditional-range-new" class="form-control" placeholder="Value" />
+                                        <select id="conditional-range-new-select" class="form-control" style="display: none;"></select>
+                                    </div>
+                                    <div class="attr-values">
+                                        <select id="conditional-range-new-attr" class="form-control">
+                                            {% for attr in custom_attributes %}
+                                                <option value="{{ attr }}">{{ attr|upper }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                {% if not custom_attributes %}
+                    </div>
+                    <div id="new-conditional-input-warning" class="alert alert-warning">
+                        <b>There are currently no custom user attributes.</b>
+                        <p>Click "Add User Attribute" in the "Actions" dropdown to enable setting conditionals.</p>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+
+            <div id="new-attribute" class="tab-pane fade">
+                <div class="alert alert-default action-description">This action sets user attributes as part of your survey logic.</div>
+                <div class="form-horizontal row">
+                    <div class="form-group">
+                        <label for="set-attribute-field-new" class="col-xs-1 control-label">Set</label>
+                        <div class="col-xs-5">
+                            <select id="set-attribute-field-new" class="form-control" onchange="setStatusCheck()">
+                                {% for attr in custom_attributes %}
+                                    <option value="{{ attr }}">{{ attr|upper }}</td>
+                                {% endfor %}
+                                <option value="status">STATUS</option>
+                            </select>
+                        </div>
+                        <label for="set-attribute-value-new" class="col-xs-1 control-label">to</label>
+                        <div class="col-xs-5">
+                            <input id="set-attribute-value-new" class="form-control" type="text" placeholder="New value" />
+                            <input id="set-attribute-value-answer" class="form-control" type="text"
+                                    value="{{ ANSWER_VALUE_DISPLAY }}" disabled />
+                            <select id="set-attribute-value-status" class="form-control" onchange="setNewStatus()">
+                                <option value="active">active</option>
+                                <option value="paused">paused</option>
+                                <option value="completed">completed</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    {% endcall %}
+
+{% endblock %}
+
+{% macro action_type(input, indent) -%}
+    {% for item in input.actions %}
+        {% if item.type == "question" %}
+            {{ display_question(item, input, loop.index0, indent=indent+1) }}
+        {% elif item.type == "conditional" %}
+            {{ display_conditional(item, input, loop.index0, indent=indent+1) }}
+        {% elif item.type == "message" %}
+            {{ display_message(item, input, loop.index0, indent=indent+1) }}
+        {% elif item.type == "set_attribute" %}
+            {{ display_set_attribute(item, input, loop.index0, indent=indent+1) }}
+        {% endif %}
+    {% endfor %}
+{%- endmacro %}
+
+{% macro day_of_week(input) -%}
+    {% set days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] %}
+    {% for item in input %}
+        {{ days[item] }},
+    {% endfor %}
+{%- endmacro %}
+
+{% macro time(input) -%}
+    {% set times = ["Midnight", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am", "9am", "10am", "11am", "Noon", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm", "10pm", "11pm"] %}
+    {{ times[input] }}
+{%- endmacro %}
+
+{% macro display_schedule(schedule, indent=0) -%}
+    <div id="{{ schedule._id }}" class="action-level" data-parent="{{ cohort._id }}" style="margin: 2em 0 4em;">
+        <span class="glyphicon glyphicon-chevron-down schedule-toggle hidden-print" aria-hidden="true" style="float: left; margin-top: 7px; margin-left: -20px;"></span>
+        <div class="schedule" style="padding-left: {{ 2 * indent }}em;">
+            <span onclick="launchEditSchedule('{{ schedule._id }}')" class="clickable point">
+                <input type="hidden" id="{{ schedule._id }}-subtype" value="{{ schedule.subtype }}" />
+                <span style="display:none;" id="{{ schedule._id }}-send-hour">{{ schedule.send_hour }}</span>
+                {% if schedule.subtype == "daily_limit" %}
+                    Send every
+                    <span id="{{ schedule._id }}-iterations">{{ schedule.question_period }}</span> days at
+                    {{ time(schedule.send_hour) }} with a question limit of
+                    <span id="{{ schedule._id }}-limit">{{ schedule.question_limit }}</span> question(s) per day
+                {% elif schedule.subtype == "on_user_creation" %}
+                    Send at user creation
+                {% elif schedule.subtype == "one_time" %}
+                    <span id="{{ schedule._id }}-date">{{ schedule.date.strftime("%Y-%m-%d") }}</span> at
+                    {{ time(schedule.send_hour) }}
+                {% elif schedule.subtype == "recurring" %}
+                    Every <span id="{{ schedule._id }}-date">{{ day_of_week(schedule.question_days_of_week) }}</span> at
+                    {{ time(schedule.send_hour) }}
+                {% endif %}
+                {% if schedule.resend_quantity > 0 -%}
+                        (resend 
+                        <span id="{{ schedule._id }}-resend-number">{{ schedule.resend_quantity }}</span>
+                        {{ "time" if schedule.resend_quantity == 1 else "times" }},
+                    {% if schedule.resend_type == "time" %}
+                        at {{ time(schedule.resend_hour) -}})
+                        <span style="display: none;" id="{{ schedule._id }}-resend-hour">{{ schedule.resend_hour }}</span>
+                    {% elif schedule.resend_type == "hours" %}
+                        every 
+                        <span id="{{ schedule._id }}-resend-interval">{{ schedule.resend_hour }}</span>
+                        {{ "hour" if schedule.resend_hour == 1 else "hours" }})
+                    {% endif %}
+                    <span style="display: none;" id="{{ schedule._id }}-resend-type">{{ schedule.resend_type }}</span>
+                {% endif %}
+            </span>
+            <span class="button-block hidden-print">
+                <button class="action-button plus" onclick="launchAddItem('{{ schedule._id }}', 'schedule')">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                </button>
+                <button class="action-button copySchedule" onclick="launchCopySchedule('{{ schedule._id }}')">
+                    <span class="glyphicon glyphicon-copy" aria-hidden="true"></span>
+                </button>
+                {% if ENABLE_SCHEDULE_TESTING %}
+                <button class="action-button manually-run-button" onclick="launchTestSchedule('{{ schedule._id }}')">
+                    <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
+                </button>
+                {% endif %}
+                <button class="delete" onclick="launchDeleteElement($(this), '{{ schedule._id }}', 'schedule', 'cohort')">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+                {% if ENABLE_FAST_FORWARD %}
+                <button class="action-button manually-run-button" onclick="launchManuallyRunSchedule('{{ schedule._id }}')">
+                    <span class="glyphicon glyphicon-fast-forward" aria-hidden="true"></span>
+                </button>
+                {% endif %}
+            </span>
+        </div>
+        {% if schedule.actions|length == 0 %}
+        <div class="alert alert-warning" style="margin: 0 2em;">
+            <b>There are currently no items on this schedule.</b>
+            <p>Click the blue plus sign above to add items.</p>
+        </div>
+        {% endif %}
+        {{ action_type(schedule, indent) }}
+    </div>
+{%- endmacro %}
+
+{% macro display_question(question, parent, index, indent=0) -%}
+    <div id="{{ question._id }}" class="action-level" data-index="{{ index }}" data-parent="{{ parent['_id'] }}">
+        <div class="question" style="padding-left: {{ 3 * indent }}em">
+            <input id="{{ question._id }}-min" type="hidden" value="{{ question.min }}" />
+            <input id="{{ question._id }}-max" type="hidden" value="{{ question.max }}" />
+            <input id="{{ question._id }}-parser" type="hidden" value="{{ question.parser }}" />
+            <div id="{{ question._id }}-choices">
+            {% for text in question.choices_text %}
+                <input type="hidden" value="{{ text }}" />
+            {% endfor %}
+            </div>
+            <b>Send Question:</b>
+            <span id="{{ question._id }}-text" class="clickable text message-content" contenteditable="true" data-parent="{{ parent['_id'] }}"
+                  data-parent-2="{{ parent['_id'] }}" data-parent-type="{{ parent['type'] }}"
+                  data-parser="{{ question.parser }}" data-previous="{{ question.text }}"
+                  data-this="{{ question._id }}" data-type="send_question">{{ question.text }}</span>
+            {%- if question.auto_append -%}
+                <span class="auto-append">{{- question.choices_append|trim -}}</span>
+                <input id="{{ question['_id'] }}-auto-append" type="hidden" value="true">
+            {% endif %}
+            <span class="point" onclick="launchEditQuestion('{{question._id}}', '{{ parent['_id']}}', '{{ parent['type']}}',
+                                         '{{question.parser}}', '{{question.choices}}')">
+            {%- if question.parser == "open_ended" -%}
+                (Open-Ended)
+            {%- elif question.parser == "multiple_choice_parser" -%}
+                (Multiple Choice. Valid Answers:{% for x in question.choices_text %} {{ x }};{% endfor %})
+            {%- elif question.parser == "number_parser" -%}
+                (Numeric. Minimum: {{ question.min }}; Maximum: {{ question.max }})
+            {%- elif question.parser == "yes_or_no_parser" -%}
+                (Yes/No)
+            {%- endif -%}
+            </span>
+            <span class="button-block hidden-print">
+                <button onclick="launchAddItem('{{ question._id }}', 'send_question', '{{ question.parser }}')" class="action-button plus">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                </button>
+                <span class="moveButtons">
+                    <button class="action-button" onclick="moveItem('up', '{{ question._id }}', '{{ parent['_id'] }}', '{{ parent['type'] }}')">
+                        <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+                    </button>
+                    <button class="action-button" onclick="moveItem('down', '{{ question._id }}', '{{ parent['_id'] }}', '{{ parent['type'] }}')">
+                        <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+                    </button>
+                </span>
+                <button class="preview-text action-button">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+                </button>
+                <button onclick="launchDeleteElement($(this), '{{ question._id }}', 'send_question', '{{ parent['type'] }}')" class="delete">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+            </span>
+        </div>
+        {{ action_type(question, indent) }}
+    </div>
+{%- endmacro %}
+
+{% macro display_conditional(conditional, parent, index, indent=0) -%}
+    <div id="{{ conditional['_id'] }}" class="action-level" data-index="{{ index }}" data-parent="{{ parent['_id'] }}">
+        <div class="conditional" style="padding-left: {{ 3 * indent }}em">
+            <span data-parent-2="{{ parent['_id'] }}" data-this="{{ conditional['_id'] }}" style="display:none;">
+                <b>If</b> {{ conditional.attribute }} {{ conditional.subtype }} {{ conditional.comparison }}
+            </span>
+            {% if parent["type"] == "question" %}
+                <span id="{{ conditional['_id'] }}-attribute" class="hidden">{{ ANSWER_VALUE }}</span>
+                <b>If</b> {{ ANSWER_VALUE_DISPLAY }} 
+                {% if parent.parser == 'multiple_choice_parser' %}
+                    <span id="{{ conditional['_id'] }}-conditional-subtype" class="hidden">exactly</span>
+                    equals
+                    <select id="{{ conditional['_id'] }}-comparison" data-parent="{{ parent['_id'] }}" data-parent-type="{{ parent['type'] }}"
+                            data-this="{{ conditional['_id'] }}" data-type="conditional" class="dropDown"
+                            onchange="saveContent($(this))">
+                        {% if conditional.comparison_is_attribute %}
+                            {% for attr in custom_attributes|sort %}
+                                {% if conditional.comparison == attr %}
+                                    <option selected="selected" value="{{ attr }}">{{ attr|upper }}</option>
+                                {% else %}
+                                    <option value="{{ attr }}">{{ attr|upper }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            {% for answer in parent.choices_text %}
+                                {% if conditional.comparison == answer %}
+                                    <option selected="selected" value="{{ answer }}">{{ answer }}</option>
+                                {% else %}
+                                    <option value="{{ answer }}">{{ answer }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                {% elif parent.parser == 'number_parser' %}
+                    <select id="{{ conditional['_id'] }}-conditional-subtype" data-parent="{{ parent['_id'] }}" data-parent-type="{{ parent['type'] }}"
+                                data-this="{{ conditional['_id'] }}" data-type="conditional" class="dropDown"
+                                onchange="saveContent($(this))">
+                        {% if conditional.subtype == 'exactly' %}
+                            <option value="exactly" selected="selected">equals</option>
+                            <option value="greater">is greater than</option>
+                            <option value="less">is less than</option>
+                            <option value="range">is between</option>
+                        {% elif conditional.subtype == 'greater' %}
+                            <option value="exactly">equals</option>
+                            <option value="greater" selected="selected">is greater than</option>
+                            <option value="less">is less than</option>
+                            <option value="range">is between</option>
+                        {% elif conditional.subtype == 'less' %}
+                            <option value="exactly">equals</option>
+                            <option value="greater">is greater than</option>
+                            <option value="less" selected="selected">is less than</option>
+                            <option value="range">is between</option>
+                        {% elif conditional.subtype == 'range' %}
+                            <option value="exactly">equals</option>
+                            <option value="greater">is greater than</option>
+                            <option value="less">is less than</option>
+                            <option value="range" selected="selected">is between</option>
+                        {% endif %}
+                    </select>
+                    <select id="{{ conditional['_id'] }}-comparison" data-parent="{{ parent['_id'] }}" data-parent-type="{{ parent['type'] }}"
+                            data-this="{{ conditional['_id'] }}" data-type="conditional" class="dropDown"
+                            onchange="saveContent($(this))">
+                        {% if conditional.comparison_is_attribute %}
+                            {% for attr in custom_attributes|sort %}
+                                {% if conditional.comparison == attr %}
+                                    <option selected="selected" value="{{ attr }}">{{ attr|upper }}</option>
+                                {% else %}
+                                    <option value="{{ attr }}">{{ attr|upper }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            {% for number in range(parent.min, parent.max+1) %}
+                                {% if conditional.comparison == number|string %}
+                                    <option selected="selected" value="{{ number }}">{{ number }}</option>
+                                {% else %}
+                                    <option value="{{ number }}">{{ number }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                    {% if conditional.subtype == 'range' %}
+                        <div id="{{ conditional['_id'] }}-range-div" class="range-div">
+                    {% else %}
+                        <div id="{{ conditional['_id'] }}-range-div" class="hidden">
+                    {% endif %}
+                            and
+                            <select id="{{ conditional['_id'] }}-upper-range" data-parent="{{ parent['_id'] }}" data-parent-type="{{ parent['type'] }}"
+                                    data-this="{{ conditional['_id'] }}" data-type="conditional" class="dropDown"
+                                    onchange="saveContent($(this))">
+                                {% if conditional.comparison_is_attribute %}
+                                    {% for attr in custom_attributes|sort %}
+                                        {% if conditional.upper_range == attr %}
+                                            <option selected="selected" value="{{ attr }}">{{ attr|upper }}</option>
+                                        {% else %}
+                                            <option value="{{ attr }}">{{ attr|upper }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    {% for number in range(parent.min, parent.max+1) %}
+                                        {% if conditional.upper_range == number|string %}
+                                            <option selected="selected" value="{{ number }}">{{ number }}</option>
+                                        {% else %}
+                                            <option value="{{ number }}">{{ number }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                {% elif parent.parser == 'yes_or_no_parser' %}
+                    <span id="{{ conditional['_id'] }}-conditional-subtype" class="hidden">exactly</span>
+                    equals
+                    <select id="{{ conditional['_id'] }}-comparison" data-parent="{{ parent['_id'] }}" data-parent-type="{{ parent['type'] }}"
+                            data-this="{{ conditional['_id'] }}" data-type="conditional" class="dropDown"
+                            onchange="saveContent($(this))">
+                        {% if conditional.comparison_is_attribute %}
+                            {% for attr in custom_attributes|sort %}
+                                {% if conditional.comparison == attr %}
+                                    <option selected="selected" value="{{ attr }}">{{ attr|upper }}</option>
+                                {% else %}
+                                    <option value="{{ attr }}">{{ attr|upper }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            {% if conditional.comparison == 'yes' %}
+                                <option selected="selected" value="yes">Yes</option>
+                                <option value="no">No</option>
+                            {% else %}
+                                <option value="yes">Yes</option>
+                                <option selected="selected" value="no">No</option>
+                            {% endif %}
+                        {% endif %}
+                    </select>
+                {% else %}
+                    <span id="{{ conditional['_id'] }}-conditional-subtype" class="hidden">exactly</span>
+                    equals
+                    <span id="{{ conditional['_id'] }}-comparison" class="clickable text" contenteditable="true"
+                          data-parent="{{ parent['_id'] }}" data-previous="{{ conditional.comparison }}"
+                          data-this="{{ conditional['_id'] }}" data-type="conditional">
+                        {{ conditional.comparison }}
+                    </span>
+                {% endif %}
+            {% else %}
+                <b>If</b>
+                <select id="{{ conditional['_id'] }}-attribute" data-parent="{{ parent['_id'] }}" data-parent-type="{{ parent['type'] }}"
+                        data-this="{{ conditional['_id'] }}" data-type="conditional" class="dropDown"
+                        onchange="saveContent($(this))">
+                    {% for attr in custom_attributes|sort %}
+                        {% if conditional.attribute == attr %}
+                            <option selected="selected" value="{{ attr }}">{{ attr|upper }}</option>
+                        {% else %}
+                            <option value="{{ attr }}">{{ attr|upper }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <select id="{{ conditional['_id'] }}-conditional-subtype" data-parent="{{ parent['_id'] }}" data-parent-type="{{ parent['type'] }}"
+                            data-this="{{ conditional['_id'] }}" data-type="conditional" class="dropDown"
+                            onchange="saveContent($(this))">
+                    {% if conditional.subtype == 'exactly' %}
+                        <option value="exactly" selected="selected">equals</option>
+                        <option value="greater">is greater than</option>
+                        <option value="less">is less than</option>
+                        <option value="range">is between</option>
+                    {% elif conditional.subtype == 'greater' %}
+                        <option value="exactly">equals</option>
+                        <option value="greater" selected="selected">is greater than</option>
+                        <option value="less">is less than</option>
+                        <option value="range">is between</option>
+                    {% elif conditional.subtype == 'less' %}
+                        <option value="exactly">equals</option>
+                        <option value="greater">is greater than</option>
+                        <option value="less" selected="selected">is less than</option>
+                        <option value="range">is between</option>
+                    {% elif conditional.subtype == 'range' %}
+                        <option value="exactly">equals</option>
+                        <option value="greater">is greater than</option>
+                        <option value="less">is less than</option>
+                        <option value="range" selected="selected">is between</option>
+                    {% endif %}
+                </select>
+                {% if conditional.comparison_is_attribute %}
+                    <select id="{{ conditional['_id'] }}-comparison" data-parent="{{ parent['_id'] }}" data-parent-type="{{ parent['type'] }}"
+                            data-this="{{ conditional['_id'] }}" data-type="conditional" class="dropDown"
+                            onchange="saveContent($(this))">
+                        {% for attr in custom_attributes|sort %}
+                            {% if conditional.comparison == attr %}
+                                <option selected="selected" value="{{ attr }}">{{ attr|upper }}</option>
+                            {% else %}
+                                <option value="{{ attr }}">{{ attr|upper }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                {% else %}
+                    <span id="{{ conditional['_id'] }}-comparison" class="clickable text" contenteditable="true"
+                          data-parent="{{ parent['_id'] }}" data-parent-type="{{ parent['type'] }}"
+                          data-previous="{{ conditional.comparison }}" data-this="{{ conditional['_id'] }}"
+                          data-type="conditional">
+                        {{ conditional.comparison }}
+                    </span>
+                {% endif %}
+                {% if conditional.subtype == 'range' %}
+                    <div id="{{ conditional['_id'] }}-range-div" class="range-div">
+                {% else %}
+                    <div id="{{ conditional['_id'] }}-range-div" class="hidden">
+                {% endif %}
+                and
+                {% if conditional.comparison_is_attribute %}
+                    <select id="{{ conditional['_id'] }}-upper-range" data-parent="{{ parent['_id'] }}" data-parent-type="{{ parent['type'] }}"
+                            data-this="{{ conditional['_id'] }}" data-type="conditional" class="dropDown"
+                            onchange="saveContent($(this))">
+                        {% for attr in custom_attributes|sort %}
+                            {% if conditional.upper_range == attr %}
+                                <option selected="selected" value="{{ attr }}">{{ attr|upper }}</option>
+                            {% else %}
+                                <option value="{{ attr }}">{{ attr|upper }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                {% else %}
+                    <span id="{{ conditional['_id'] }}-upper-range" class="clickable text" contenteditable="true"
+                      data-parent="{{ parent['_id'] }}" data-parent-type="{{ parent['type'] }}"
+                      data-previous="{{ conditional.comparison }}" data-this="{{ conditional['_id'] }}"
+                      data-type="conditional">
+                    {{ conditional.upper_range }}
+                    </span>
+                {% endif %}
+                </div>
+            {% endif %}
+            <span class="point" data-parent="{{ parent['_id'] }}" data-parent-type="{{ parent['type'] }}" data-this="{{ conditional['_id'] }}" 
+                data-value="{{ conditional.comparison_is_attribute }}" onclick="launchEditConditional($(this))">
+            {% if conditional.comparison_is_attribute %}
+                (Compares to Attribute)
+            {% else %}
+                (Compares to Absolute)
+            {% endif %}
+            </span>            
+            <span class="button-block hidden-print">
+                <button onclick="launchAddItem('{{ conditional['_id'] }}', 'conditional')" class="action-button plus">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                </button>
+                <span class="moveButtons">
+                    <button class="action-button" onclick="moveItem('up', '{{ conditional['_id'] }}', '{{ parent['_id'] }}', '{{ parent['type'] }}')">
+                        <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+                    </button>
+                    <button class="action-button" onclick="moveItem('down', '{{ conditional['_id'] }}', '{{ parent['_id'] }}', '{{ parent['type'] }}')">
+                        <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+                    </button>
+                </span>
+                <button onclick="launchDeleteElement($(this), '{{ conditional['_id'] }}', 'conditional', '{{ parent['type'] }}')" class="delete">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+            </span>
+        </div>
+    {{ action_type(conditional, indent) }}
+    </div>
+{%- endmacro %}
+
+{% macro display_set_attribute(set_attribute, parent, index, indent=0) -%}
+    <div id="{{ set_attribute['_id'] }}" class="action-level" data-index="{{ index }}" data-parent="{{ parent['_id'] }}">
+        <div class="action" style="padding-left: {{ 3 * indent }}em">
+            <span data-parent-2="{{ parent['_id'] }}" data-this="{{ set_attribute['_id'] }}" style="display:none;">
+                <b>Set</b> {{ set_attribute.attribute_name }} to {{ set_attribute.attribute_value }}
+            </span>
+            {% if parent["type"] == "question" %}
+                <b>Set</b>
+                <select id="{{ set_attribute['_id'] }}-attribute" data-parent="{{ parent['_id'] }}" data-parent-type="{{ parent['type'] }}"
+                        data-this="{{ set_attribute['_id'] }}" data-type="set_attribute" class="dropDown"
+                        onchange="saveContent($(this))">
+                    {% for attr in custom_attributes|sort %}
+                        {% if set_attribute.attribute_name == attr %}
+                            <option value="{{ attr }}" selected="true">{{ attr|upper }}</option>
+                        {% else %}
+                            <option value="{{ attr }}">{{ attr|upper }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select> to {{ ANSWER_VALUE_DISPLAY }}
+                <span id="{{ set_attribute['_id'] }}-value" class="hidden">{{ ANSWER_VALUE }}</span>
+            {% elif set_attribute.attribute_name == "status" %}
+                <b>Set</b>
+                <select id="{{ set_attribute['_id'] }}-attribute" data-parent="{{ parent['_id'] }}" data-parent-type="{{ parent['type'] }}"
+                        data-this="{{ set_attribute['_id'] }}" data-type="set_attribute" class="dropDown"
+                        onchange='setStatusCheck("{{ set_attribute["_id"] }}")'>
+                    {% for attr in custom_attributes|sort %}
+                        <option value="{{ attr }}">{{ attr|upper }}</option>
+                    {% endfor %}
+                    <option value="status" selected="true">STATUS</option>
+                </select> to
+                <span id="{{ set_attribute['_id'] }}-value" class="clickable text status-hide" contenteditable="true"
+                      data-parent="{{ parent['_id'] }}" data-parent-type="{{ parent['type'] }}"
+                      data-previous="{{ set_attribute['attribute_value'] }}" data-this="{{ set_attribute['_id'] }}" data-type="set_attribute"
+                      >{{ set_attribute["attribute_value"] }}</span>
+                <select id="{{ set_attribute['_id'] }}-status" class="dropDown" onchange='setNewStatus("{{ set_attribute["_id"] }}")'>
+                    {% if set_attribute["attribute_value"] == "active" %}
+                        <option value="active" selected="true">active</option>
+                        <option value="paused">paused</option>
+                        <option value="completed">completed</option>
+                    {% elif set_attribute["attribute_value"] == "paused" %}
+                        <option value="active">active</option>
+                        <option value="paused" selected="true">paused</option>
+                        <option value="completed">completed</option>                 
+                    {% else %}
+                        <option value="active" selected="true">active</option>
+                        <option value="paused">paused</option>
+                        <option value="completed" selected="true">completed</option>                   
+                    {% endif %}
+                </select>
+            {% else %}
+                <b>Set</b>
+                <select id="{{ set_attribute['_id'] }}-attribute" data-parent="{{ parent['_id'] }}" data-parent-type="{{ parent['type'] }}"
+                        data-this="{{ set_attribute['_id'] }}" data-type="set_attribute" class="dropDown"
+                        onchange='setStatusCheck("{{ set_attribute["_id"] }}")'>
+                    {% for attr in custom_attributes|sort %}
+                        {% if set_attribute.attribute_name == attr %}
+                            <option value="{{ attr }}" selected="true">{{ attr|upper }}</option>
+                        {% else %}
+                            <option value="{{ attr }}">{{ attr|upper }}</option>
+                        {% endif %}
+                    {% endfor %}
+                    <option value="status">STATUS</option>
+                </select> to
+                <span id="{{ set_attribute['_id'] }}-value" class="clickable text" contenteditable="true"
+                      data-parent="{{ parent['_id'] }}" data-parent-type="{{ parent['type'] }}"
+                      data-previous="{{ set_attribute['attribute_value'] }}" data-this="{{ set_attribute['_id'] }}" data-type="set_attribute"
+                      >{{ set_attribute["attribute_value"] }}</span>
+                <select id="{{ set_attribute['_id'] }}-status" class="dropDown status-hide" onchange='setNewStatus("{{ set_attribute["_id"] }}")'>
+                    <option value="active" selected="true">active</option>
+                    <option value="paused">paused</option>
+                    <option value="completed">completed</option>
+                </select>
+            {% endif %}
+            <span class="button-block hidden-print">
+                <span class="moveButtons">
+                    <button class="action-button" onclick="moveItem('up', '{{ set_attribute['_id'] }}', '{{ parent['_id'] }}', '{{ parent['type'] }}')">
+                        <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+                    </button>
+                    <button class="action-button" onclick="moveItem('down', '{{ set_attribute['_id'] }}', '{{ parent['_id'] }}', '{{ parent['type'] }}')">
+                        <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+                    </button>
+                </span>
+                <button onclick="launchDeleteElement($(this), '{{ set_attribute['_id'] }}', 'set_attribute', '{{ parent['type'] }}')" class="delete">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+            </span>
+        </div>
+    </div>
+{%- endmacro %}
+
+{% macro display_message(message, parent, index, indent=0) -%}
+    <div id="{{ message['_id'] }}" class="action-level" data-index="{{ index }}" data-parent="{{ parent['_id'] }}">
+        <div class="message" style="padding-left: {{ 3 * indent }}em">
+            <b>Send Message:</b>
+            <span class="clickable text message-content" contenteditable="true" data-parent="{{ parent['_id'] }}"
+                  data-parent-2="{{ parent['_id'] }}" data-parent-type="{{ parent['type'] }}"
+                  data-previous="{{ message.text }}" data-this="{{ message['_id'] }}" data-type="send_message">
+                {{- message.text -}}
+            </span>
+            <span class="button-block hidden-print">
+                <span class="moveButtons">
+                    <button class="action-button" onclick="moveItem('up', '{{ message['_id'] }}', '{{ parent['_id'] }}', '{{ parent['type'] }}')">
+                        <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+                    </button>
+                    <button class="action-button" onclick="moveItem('down', '{{ message['_id'] }}', '{{ parent['_id'] }}', '{{ parent['type'] }}')">
+                        <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+                    </button>
+                </span>
+                <button class="preview-text action-button">
+                    <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                </button>
+                <button onclick="launchDeleteElement($(this), '{{ message['_id'] }}', 'send_message', '{{ parent['type'] }}')" class="delete">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+            </span>
+        </div>
+    </div>
+{%- endmacro %}

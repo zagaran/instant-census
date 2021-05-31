@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Needs Review | Instant Census{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="/static/css/needs_review.css">
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="/static/javascript/needs_review.js"></script>
+{% endblock %}
+
+{% block actions %}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% macro display_cohort_needs_review(cohort, panel_type="panel-default") -%}
+        <div class="panel {{ panel_type }}">
+            <div class="panel-heading"><b>Cohort "<span id="{{ cohort._id }}name">{{ cohort.cohort_name }}</span>"</b></div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-6 form-group">
+                        <dl class="dl-horizontal">
+                            <dt>Cohort Status:</dt>
+                                <dd>{{ cohort.status|title }}</dd>
+                            <dt>Users (Active):</dt>
+                                <dd>{{ cohort.get_active_user_count() }} </dd>
+                            <dt>Users (Total):</dt>
+                                <dd>{{ cohort.get_total_user_count() }} </dd>
+                            <dt>Users (Needs Review):</dt>
+                                <dd>{{ cohort.get_unhandled_user_count() }} </dd>
+                            <dt>Desired Area Code:</dt>
+                                <dd id="{{ cohort._id }}area">{{ cohort.area_code | default("None specified.") }}</dd>
+                            <dt>Numbers:</dt>
+                                <dd>{{ cohort.ic_numbers | phonenum_humanize_filter }}</dd>
+                        </dl>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <label>These users need reviewing:</label>
+                                <hr />
+                                {% for user in users[cohort["_id"]] %}
+                                    <a href="/{{ cohort['_id'] }}/send/{{ user['_id'] }}" class="btn btn-block btn-primary">{{ user["phonenum"] | phonenum_humanize_filter }}</a>
+                                {% else %}
+                                    <p>No users in this cohort need reviewing.</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endmacro %}
+        
+        <!-- Non-completed cohorts with needs review -->
+        <h3>Cohorts with users needing review</h3>
+        {% for cohort in non_completed_cohorts %}
+        {{ display_cohort_needs_review(cohort, panel_type="panel-primary") }}
+        {% endfor %}
+        <!-- /Non-completed cohorts with needs review -->
+        
+        <!-- Non-completed cohorts with no needs review -->
+        <hr>
+        <h3>Cohorts with no users needing review</h3>
+        {% if non_completed_cohorts_empty|length > 0 %}
+        <a id="show-empty-cohorts-button" href="javascript:void(0)" onclick="showEmptyCohorts()">
+            <div class="alert alert-default text-center">
+                Click here to show {{ non_completed_cohorts_empty|length }} cohorts with no users needing review.
+            </div>
+        </a>
+        <div id="empty-cohorts-container">
+            {% for cohort in non_completed_cohorts_empty %}
+            {{ display_cohort_needs_review(cohort, panel_type="panel-info") }}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-default text-center">No cohorts with no users needing review</div>
+        {% endif %}
+        <!-- /Non-completed cohorts with no needs review -->
+        
+        <!-- Completed cohorts -->
+        <hr>
+        <h3>Completed Cohorts</h3>
+        {% if completed_cohorts|length > 0 %}
+        <a id="show-completed-cohorts-button" href="javascript:void(0)" onclick="showCompletedCohorts()">
+            <div class="alert alert-default text-center">
+                Click here to show {{ completed_cohorts|length }} completed cohorts.
+            </div>
+        </a>
+        <div id="completed-cohorts-container">
+            {% for cohort in completed_cohorts %}
+            {{ display_cohort_needs_review(cohort) }}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-default text-center">No completed cohorts</div>
+        {% endif %}
+    <!-- /Completed cohorts -->
+    </div>
+{% endblock %}

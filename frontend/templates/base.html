@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width" />
+
+        <!-- Google API will provide browser-specific code for fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono|Quicksand:300,400,700|Merriweather:400,300,300italic,400italic,700,700italic,900,900italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+        <link href="/static/css/libraries/bootstrap.css" media="all" rel="stylesheet" type="text/css">
+        <link href="/static/css/ic-bootstrap-theme.css" media="all" rel="stylesheet" type="text/css">
+        <link href="/static/css/global.css" media="all" rel="stylesheet" type="text/css">
+        <link href="/static/css/libraries/jquery-ui.min.css" rel="stylesheet" type="text/css">
+
+        <link href="/static/img/favicon_64.ico" rel="icon" type="image/ico">
+
+        <title>{% block title %}{% endblock %}</title>
+
+        {% block head %}{% endblock %}
+    </head>
+    
+    <body>
+
+        <!-- status popup -->
+        <div id="status-popup" class="alert-default" style="">
+            <div class="status-popup-animated">
+                <!-- animated glyphicon -->
+                <span class="glyphicon glyphicon-refresh spinning"></span>
+            </div>
+            <!-- status message message -->
+            <span id="status-popup-message">Loading</span>
+            <div class="status-popup-animated">
+                <!-- animated ellipsis -->
+                <span class="ellipsis ellipsis-one">.</span>
+                <span class="ellipsis ellipsis-two">.</span>
+                <span class="ellipsis ellipsis-three">.</span>
+            </div>
+        </div>
+
+        <!-- top nav -->
+        <div id="top-nav-container">
+            <nav id="top-nav" class="navbar navbar-fixed-top">
+                <div class="container">
+                    <ul class="list-inline">
+                        <li id="logo-li" class="navbar-left">
+                            <a href="/cohorts">
+                                <img src="/static/img/ICLogo-dark.png" id="top-nav-logo" alt="Instant Census" />
+                                Instant Census
+                            </a>
+                        </li>
+                        {% if session["expiry"] %}
+                            {% if page == "message_sender" %}
+                                <li id="selected-page"><a data-placement="bottom" data-toggle="tooltip" title="View message history and send messages">History</a></li>
+                            {% endif %}
+                            {% if cohort %}
+                                <li{% if page == "users" %} id="selected-page"{% endif %}><a href="/{{ cohort['_id'] }}/users" data-placement="bottom" data-toggle="tooltip" title="View and manage your users">Users</a></li>
+                                <li{% if page == "surveys" %} id="selected-page"{% endif %}><a href="/{{ cohort['_id'] }}/surveys" data-placement="bottom" data-toggle="tooltip" title="View and manage your surveys">Surveys</a></li>
+                            {% else %}
+                                <li class="disabled"><a>Users</a></li>
+                                <li class="disabled"><a>Surveys</a></li>
+                            {% endif %}
+                            <li{% if page == "cohorts" %} id="selected-page"{% endif %}><a href="/cohorts" data-placement="bottom" data-toggle="tooltip" title="View your cohorts">Cohorts</a></li>
+                            <li{% if page == "needs_review" %} id="selected-page"{% endif %}><a href="/review" data-placement="bottom" data-toggle="tooltip" title="View unhandled users/messages">Inbox <span class="badge">{{ unhandled_user_count }}</span></a></li>
+                            {% if DATA_REPORTS_FEATURE %}
+                                <li{% if page == "data_reports" %} id="selected-page"{% endif %}><a href="/data" data-placement="bottom" data-toggle="tooltip" title="View data reports">Data</a></li>
+                            {% endif %}
+                            <li{% if page == "docs" %} id="selected-page"{% endif %}><a href="/docs" data-placement="bottom" data-toggle="tooltip" title="View Instant Census documentation">Docs</a></li>
+                            <li><a href="/logout" data-placement="bottom" data-toggle="tooltip" title="Log out"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span></a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </nav>
+            <div id="sub-nav-container" class="hidden-print">
+                <div class="container">
+                    <ul class="list-inline">
+                        {% if self.actions() %}
+                            <li id="actions-dropdown-button" class="dropdown">
+                                Actions <b class="caret"></b>
+                                <ul id="actions-dropdown" class="dropdown-menu">
+                                    {% block actions %}{% endblock %}
+                                </ul>
+                            </li>
+                        {% endif %}
+                        {% if cohort %}
+                            <li data-placement="bottom" data-toggle="tooltip" title='"{{ cohort.cohort_name }}"'><b>Cohort Name:</b> "{{ cohort.cohort_name }}"</li>
+                        {% elif session["customer_name"] %}
+                            <li><b>Welcome to Instant Census, {{ session["customer_name"] }}!</b> ( {{ session["admin_email"] }} )</li>
+                        {% else %}
+                            <li><b>Welcome to Instant Census!</b></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- /top nav -->
+
+        <!-- overlay -->
+        <div id="overlay" class="overlay"></div>
+        <!-- /overlay -->
+
+        <!-- printing notes -->
+        <div class="visible-print-block">
+            <div class="row">
+                <div class="col-xs-2">
+                    <img src="/static/img/ICLogo-dark.png" class="img-responsive" alt="Instant Census" />
+                </div>
+                <div class="col-xs-10">
+                    <h1>{{ self.title() }}</h1>
+                    <p>(printed on <span id="current-date-time"></span>)</p>
+                </div>
+            </div>
+        </div>
+        <!-- /printing notes -->
+
+        <!-- flash messages -->
+        <div class="container hidden-print">
+        {% with flash_messages = get_flashed_messages(with_categories=true) %}
+            {% if flash_messages %}
+                <!-- display messages -->
+                {% for category, message in flash_messages %}
+                <div class="alert alert-{{ category }} alert-dismissible alert-flash fade in" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    {% if category == "danger" %}
+                    <strong class="extra-space-right">Error!</strong>
+                    {% else %}
+                    <strong class="extra-space-right">{{ category | capitalize }}!</strong>
+                    {% endif %}
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        </div>
+        <!-- /flash messages -->
+
+        {% if customer %}
+            <input id="customerId" type="hidden" value="{{ customer['_id'] }}" />
+        {% endif %}
+        {% if cohort %}
+            <input id="cohort-id" type="hidden" value="{{ cohort['_id'] }}" />
+            <input id="cohort-status" type="hidden" value="{{ cohort['status'] }}" />
+        {% else %}
+            <input id="cohort-id" type="hidden" value="new" />
+        {% endif %}
+
+        <div id="content-wrapper">
+            {% block page_top %}{% endblock %}
+            {% block content %}{% endblock %}
+            {% block page_bottom %}{% endblock %}
+        </div>
+
+        <!-- Confirmation modal template -->
+        <!-- use jinja2 call block for modal body -->
+        {% macro generate_modal(modal_id, modal_title, modal_action_href, modal_action_onclick, modal_action_label, modal_action_id, auto_dismiss, actionable_color) %}
+        <div id="{{ modal_id }}" class="modal fade" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">{{ modal_title }}</h4>
+                    </div>
+                    <div class="modal-body">
+                        {{ caller() }}
+                    </div>
+                    <div class="modal-footer">
+                        {% if modal_action_label != "_none" %}
+                        <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        {% if actionable_color %}
+                            <a class="btn btn-{{ actionable_color }}"
+                        {% else %}
+                            <a class="btn btn-primary"
+                        {% endif %}
+                           {% if auto_dismiss %}data-dismiss="modal"{% endif %}
+                           href="{% if modal_action_href != "_none" %}{{ modal_action_href }}{% else %}javascript:void(0);{% endif %}"
+                           {% if modal_action_onclick != "_none" %}onclick="{{ modal_action_onclick }}"{% endif %}
+                           {% if modal_action_id != "_none" %}id="{{ modal_action_id }}"{% endif %}>{{ modal_action_label }}</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endmacro %}
+
+        <!-- no script message -->
+        <noscript>
+            <div id="no-script" class="overlay">
+                <div id="no-script-modal">
+                    <h2>Oops!</h2>
+                    <h5>It looks like JavaScript is disabled on your browser.</h5>
+                    <br />
+                    <p>Instant Census is an interactive technology platform that requires that JavaScript be enabled.</p>
+                    <p>
+                        <a href="http://www.enable-javascript.com/" rel="nofollow" target="_blank">
+                            Click here for instructions
+                        </a>
+                        on how to enable JavaScript in your browser.
+                    </p>
+                </div>
+            </div>
+            <style>
+                body { overflow: hidden }
+            </style>
+        </noscript>
+                
+        <!-- javascript -->
+        <script src="/static/javascript/libraries/jquery-1.11.3.min.js"></script>       
+        <script src="/static/javascript/libraries/bootstrap-3.3.4.min.js"></script>
+        <script src="/static/javascript/libraries/angular-1.4.6.min.js"></script> 
+        <script src="/static/javascript/libraries/jquery-ui-1.11.4.min.js"></script>
+        <script src="/static/javascript/functions.js"></script>
+        {% block javascript %}{% endblock %}
+        {% if JS_SENTRY_DSN %}
+            <script src="https://cdn.ravenjs.com/3.10.0/raven.min.js" crossorigin="anonymous"></script>
+            <script>Raven.config("{{ JS_SENTRY_DSN }}").install();</script>
+        {% endif %}
+        <!-- /javascript -->
+    </body>
+
+</html>

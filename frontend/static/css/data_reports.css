@@ -1,0 +1,54 @@
+/**************************************
+ * Elements
+ **************************************/
+svg {
+    display: block;
+}
+
+
+/**************************************
+ * Ids
+ **************************************/
+#data-reports-container .panel-body {
+    position: relative;
+}
+#messages-svg,
+#responses-svg,
+#response-time-svg,
+#users-svg {
+    height: 500px;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+#responses-question-option {
+    max-width: 400px;
+}
+#responses-cohort-option {
+    max-width: 200px;
+}
+
+
+/**************************************
+ * Classes
+ **************************************/
+.loading {
+    font-size: 20px;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+}
+.options b {
+    position: relative;
+    top: 5px;
+}
+.panel-heading h4 {
+    margin: 0;
+}
+.svg-container {
+    height: 100%;
+    overflow: auto;
+    position: static;
+    width: 100%;
+}

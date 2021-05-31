@@ -1,0 +1,19 @@
+#download-cohort-users-options-div,
+#download-user-message-histories-options-div {
+    margin-top: 4px;
+    display: none;
+}
+textarea {
+    resize: none;
+}
+.glyphicon-question-sign {
+    cursor: help;
+}
+#welcome-message-legally-required {
+    border: 1px solid #cccccc;
+    border-top: 0px;
+    padding: 6px 12px;
+}
+#completed-cohorts-container {
+    display: none;
+}

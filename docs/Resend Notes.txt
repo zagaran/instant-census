@@ -1,0 +1,25 @@
+2 Hour buffer between send times
+
+Informational Messages:
+    Do not get resent
+    Fall outsit normal resend structure
+    Sent before questions if at same time
+    Ignored for determining last question
+
+Resending Behavior:
+    If a resend runs into another iteration of its schedule, it is not resent
+    Ignore Informational Messages
+    Resend times are tied to Schedule send time NOT respond time
+    Resends are configured with a time to send, and a number of resends; the next time that time comes up, it is resent and every subsequent time it is that time until you have hit the specified number of resends
+    Resends are set for every Schedule, they must be set for every schedule, you can set it to NEVER resend
+
+Conflict Logic:
+    If it is a conflict between two iterations of the same schedule, use the second one, no conflict
+    Informational Messages do not trigger a conflict; just send them (ideally BEFORE the question)
+    In event of conflict, ask it all; prioritize one survey, ask that first, upon its completion ask the second, independent resend conditions apply?
+    Follow-ups first, resends, new questions
+
+3 Schedule Types:
+    1. Recurring: every [DAYOFWEEK] at [TIME]
+    2. Specific Dates: On [DATE] at [TIME]
+    3. Question Bag: Every [X DAYS] at [TIME] limit [QUESTIONLIMIT]

@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}History | Instant Census{% endblock %}
+        
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="/static/css/message_sender.css">
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        var DISABLED = {{ "true" if not user["ic_number"] or user["status"] in ["disabled", "deleted"] or COHORT_COMPLETED else "false" }};
+    </script>
+
+    <script type="text/javascript" src="/static/javascript/message_sender.js"></script>
+{% endblock %}
+
+{% block actions %}
+    <li><a href="javascript:void(0)" onclick="markAsHandled('{{ user['_id'] }}')">Mark User As Handled</a></li>
+    <li><a href="javascript:void(0)" onclick="goToNextUnhandledMessage()">Next Unhandled Message</a></li>
+    <li><a href="/download/history/{{ user['_id'] }}">Download Message History</a></li>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+    {% if user %}
+        <div class="row">
+            <div class="col-xs-6">
+                <div id="main-attributes" class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Main Attributes</h4>
+                    </div>
+                    <div class="panel-body">
+                    {% if user["status"] == "disabled" %}
+                        <p class="alert alert-warning">
+                            <b>WARNING:</b>
+                            This user has texted "stop" and is disabled. Messages cannot currently be sent to this user.
+                        </p>
+                    {% endif %}
+                        <dl class="dl-horizontal">
+                            <dt>User Phone:</dt>
+                                <dd id="user-phone" contenteditable="true" class="editable" data-previous="{{ user['phonenum'] | phonenum_humanize_filter }}" data-custom-attr="phonenum">{{ user["phonenum"] | phonenum_humanize_filter }}</dd>
+                            <dt>Cohort:</dt>
+                                <dd>{{ cohort["cohort_name"] }}</dd>
+                            <dt>Cohort Status:</dt>
+                                <dd>{{ cohort["status"] }}</dd>
+                            <dt>System Number:</dt>
+                                <dd>{{ user["ic_number"] | phonenum_humanize_filter }}</dd>
+                            <dt>Timezone:</dt>
+                                <dd>{{ user["timezone"] }}</dd>
+                            <dt>Currently in active survey?</dt>
+                                <dd id="active-session">{% if user["current_execution"] %}Yes{% else %}No {% endif %}</dd>
+                            <dt>Unhandled Messages:</dt>
+                                <dd>{{ user.get_unhandled_message_count() }}</dd>
+                        </dl>
+                    </div>
+                </div>
+                <div id="user-attributes" class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Other Attributes</h4>
+                    </div>
+                    <div class="panel-body">
+                        <dl class="dl-horizontal">
+                            <dt>User ID:</dt>
+                                <dd>{{ user["_id"] }}</dd>
+                            <dt>Create Time:</dt>
+                                <dd>{{ user["create_time"].strftime("%a, %b %d, %Y %I:%M:%S%p").replace(" 0", " ") }} {{ timezone or "UTC" }}</dd>
+                            <dt>Status:</dt>
+                                <dd id="status" class='{{ user["status"] }}' onclick="launchChangeUserStatus()">{{ user["status"] }}</dd>
+                        </dl>
+                        <hr />
+                        <dl class="dl-horizontal">
+                            {% for key, value in user["custom_attributes"].iteritems() %}
+                                <dt>{{ key | upper }}:</dt>
+                                    <dd contenteditable="true" class="editable" data-previous="{{ value }}" data-custom-attr="{{ key }}" id="_user-{{ key }}">{{ value }}</dd>
+                            {% endfor %}
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div id="message-history-header">
+                            <h4>Message History</h4>
+                        </div>
+                        <div id="message-history">
+                        {% for message in user_messages %}
+                            {% if message["incoming"] %}
+                                <div class="time from">{{ message["time"].strftime("%a, %b %d, %Y %I:%M:%S%p").replace(" 0", " ") }} {{ timezone or "UTC" }}</div>
+                                <div class="message from{% if "needs_review" in message and message["needs_review"] %} needs-review{% endif %}">{{ message.text }} </div>
+                            {% else %}
+                                <div class="time to">{{ message["time"].strftime("%a, %b %d, %Y %I:%M:%S%p").replace(" 0", " ") }} {{ timezone or "UTC" }}</div>
+                                <div class="message to">{{ message["text"] }}</div>
+                            {% endif %}
+                        {% endfor %}
+                        {% if not user_messages %}
+                            <div class="alert alert-warning">
+                                <strong>There are no messages for this user.</strong>
+                            </div>
+                        {% endif %}
+                        {% if not user["ic_number"] %}
+                            <div class="alert alert-danger">
+                                 <p><strong>Warning:</strong> There's no phone number (System Number) to message this user from. Activate the cohort for a System Number to be assigned for this user.</p>
+                            </div>
+                        {% endif %}
+                        
+                        </div>
+                    </div>
+                </div>
+                <div id="message-send" class="row">
+                    <form id='message-send-form'>
+                        <div class="col-xs-9">
+                            <textarea id="message-content" class="form-control"
+                                      {{ "disabled" if not user["ic_number"] or user["status"] == "disabled" or cohort.is_initiated() == False }}></textarea>
+                        </div>
+                        <div class="col-xs-3">
+                            <button id="message-send-button" class="btn btn-success btn-block" disabled="true">
+                                Send
+                            </button>
+                        </div>
+                        <input id="user-id" type="hidden" value="{{ user['_id'] }}" />
+                        <input id="cohort-id" type="hidden" value="{{ cohort['_id'] }}" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    </div>
+
+    {% from "base.html" import generate_modal %}
+    <!-- caution about sending questions modal -->
+    {% call generate_modal("caution-sending-questions",
+                           "Send Confirmation",
+                           "_none",
+                           "sendManualMessage()",
+                           "Send Text",
+                           "_none",
+                           "True",
+                          ) %}
+        <h4>Caution:</h4>
+        <p>Sending questions to survey participants during an active survey session may cause confusion for the participant.</p>
+    {% endcall %}
+    <!-- change user status modal -->
+    {% call generate_modal("change-user-status",
+                           "",
+                           "_none",
+                           "",
+                           "",
+                           "_none"
+                          ) %}
+        <p>
+            <b>
+                Are you sure you want to <span id="change-user-status-new-status-verb"></span>
+                "<span id="change-user-status-phone-number"></span>"?
+            </b>
+        </p>
+        <p>This action will send the following message to the user:</p>
+        <p id="change-user-status-pause-message" class="alert alert-default">"{{ DEFAULT_COHORT_PAUSE }}"</p>
+        <p id="change-user-status-activate-message" class="alert alert-default">"{{ DEFAULT_USER_RESTART }}"</p>
+    {% endcall %}
+    <!-- delete user modal -->
+    {% call generate_modal("delete-user",
+                           "Delete User",
+                           "_none",
+                           "",
+                           "Delete User",
+                           "_none",
+                           "",
+                           "danger"
+                          ) %}
+        <p>
+            <b>
+                Are you sure you want to delete
+                "<span id="delete-user-phone-number"></span>"?
+            </b>
+        </p>
+    {% endcall %}
+
+{% endblock %}

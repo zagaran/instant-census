@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Terms and Services | Instant Census{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="/static/css/docs.css">
+{% endblock %}
+
+{% block javascript %}
+    <script src="/static/javascript/docs.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container section">
+<a class="hidden-print" href="javascript:void(0);" onclick="printPage('true')">Click Here To Print Page</a>
+{% filter markdown %}
+{# Markdown syntax: http://daringfireball.net/projects/markdown/syntax #}
+
+# Instant Census Terms of Service
+
+_Last updated: Tuesday, September 15, 2015_
+
+---
+    
+{% endfilter %}
+{% filter markdown %}
+
+    
+### Table of Contents
+[TOC]
+
+### By using Instant Census, you agree to the following terms and conditions:
+
+* **Keep it legal**: Any usage of Instant Census must conform to the regulations set forward by the FCC 
+governing automated SMS messaging. In addition, such usage must not break any laws 
+in any jurisdiction in which Customer sends or receives messages using Instant Census.
+
+* **You are responsible for your usage:** Zagaran, Inc. bears no responsibility for informing you of these laws and regulations, 
+nor for ensuring that your usage of Instant Census conforms to them. You are entirely 
+responsible for ensuring its usage conforms to the applicable standards and laws.
+    
+3. **We're not legal advisors**: You acknowledge and agree that any information Zagaran, Inc. may give you concerning 
+such laws and regulations is purely informational in nature, may not represent current 
+consensus about how such laws and regulations are to be interpreted and applied, and in 
+any event is not sufficient for you to discharge yor responsibilities with regards to this 
+Terms of Service.
+
+4. **Keep yourself informed**: You acknowledge and agree that the laws and regulations regarding automated SMS messaging
+are likely to change, evolve, and grow as time goes on, and it is solely your responsibility
+to keep abreast of such changes. You must bring its usage of Instant Census into line with
+any such changes, evolutions, or additions as soon as any are implemented, and bear sole 
+responsibility for doing so.
+
+5. **Limits to our liability**: You must indemnify and hold harmless Zagaran, Inc., its affiliates, directors, officers, 
+and employees from any Liabilities arising in connection with any Legal Action against 
+Zagaran, Inc., its affiliates, directors or employees arising in connection with your 
+(along with anyone else using Instant Census through your deployment) use of Instant 
+Census in violation of applicable law or regulations.
+
+6. **Notices to you and our conditions**: To seek indemnification, Zagaran, Inc. must give written notice to you of any Legal Action 
+no later than 30 days after first receiving notice of a Legal Action, and must give copies 
+to you of all communications, notices and/or other actions relating to the Legal Action. 
+Zagaran, Inc. agrees to give you the sole control of the defense of any Legal Action, must 
+act in accordance with your reasonable instructions and must give you such assistance as you 
+reasonably request to defend or settle such claim. You must conduct your defense at all 
+times in a manner that is not adverse to Zagaran, Inc.'s interests. Zagaran, Inc. may employ 
+its own counsel to assist it with respect to any such claim, and in such case you must bear 
+all costs of engaging this counsel. Zagaran, Inc. must not settle or compromise any Legal 
+Action without your express written consent.
+
+
+###The End
+Congratulations for finishing all this reading! Now you are 100% ready to use Instant Census 
+like never before. Thanks for being a Instant Census Customer. If you have any questions, please
+feel free to email us anytime at <a href="mailto:support@instantcensus.com" target="_blank">support@instantcensus.com</a>.
+
+
+{% endfilter %}
+</div>
+
+<div id="agreement-form-container" class="container hidden-print">
+    <form action="/tos" method="post">
+        <div class="checkbox well">
+            <label>
+                <input id="tos-checkbox" name="tos_checkbox" type="checkbox"><b>By checking this box and by using Instant Census, you agree to these terms of service.</b>
+            </label>
+        </div>
+        <button id="tos-submit" class="btn btn-block btn-primary" disabled="true" type="submit">Submit</button>
+    </form>
+</div>
+{% endblock content %}

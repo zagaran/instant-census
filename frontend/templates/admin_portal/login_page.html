@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Login | Instant Census{% endblock %}
+
+{% block javascript %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h4>Please log in to use Instant Census.</h4>
+    <br />
+    <div class="col-xs-6">
+        <form method="POST" action="/login" role="form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" class="form-control" value="{{ email }}" autofocus/>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" class="form-control" />
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-block btn-primary">Log In</button>
+            </div>
+        </form>
+        {% if not DISABLE_PASSWORD_RESET %}
+            <a href="/reset_password">Forgot password?</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+<!-- pause cohort confirmation modal -->
+{% from "base.html" import generate_modal %}
+{% call generate_modal("%s-pause-cohort-modal" % cohort["_id"],
+                       "Pause Cohort Confirmation",
+                       "_none",
+                       "changeCohortStatus('%s')" % cohort["_id"],
+                       "Yes, Pause Cohort",
+                       "_none",
+                       "",
+                      ) %}
+    <p><b>Are you sure you want to pause cohort "{{ cohort["cohort_name"]}}"?</b></p>
+    {% if not DISABLE_COHORT_STATUS_CHANGE_MESSAGES %}
+        <div class="alert alert-warning">
+            <p><b>WARNING:</b> This action will send the following message to all {{ cohort["get_active_user_count"] }} active users in your cohort:</p>
+            <br>
+            <p class="alert alert-default">"{{ DEFAULT_COHORT_PAUSE }}"</p>
+        </div>
+    {% endif %}
+{% endcall %}

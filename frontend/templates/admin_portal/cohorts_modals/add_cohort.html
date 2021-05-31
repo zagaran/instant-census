@@ -1,0 +1,69 @@
+<!-- add cohort modal -->
+{% from "base.html" import generate_modal %}
+{% call generate_modal("addCohort",
+                       "Add Cohort",
+                       "_none",
+                       "addCohort()",
+                       "Okay",
+                       "_none"
+                      ) %}
+    <div class="form-horizontal modal-form wrow">
+        <div class="form-group">
+            <label for="cohort-name" class="col-xs-4 control-label">Cohort Name:</label>
+            <div class="col-xs-8">
+                <input id="cohort-name" class="form-control" placeholder="Enter cohort name here" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="welcome-message" class="col-xs-4 control-label">
+                <span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" data-placement="bottom"
+                      title="Customize your welcome message (the following legally required information will be appended to your message)."></span>
+                Welcome Message:
+            </label>
+            {% if DISABLE_WELCOME %}
+                <div class="col-xs-8">
+                    <input class="form-control" value="[Welcome Message Disabled]" disabled="true" />
+                </div>
+            {% elif CUSTOM_WELCOME_OVERRIDE %}
+                <div class="col-xs-8">
+                    <input id="welcome-message" class="form-control disabled" disabled="true" value="{{- CUSTOM_WELCOME_OVERRIDE -}}" />
+                </div>
+            {% else %}
+                <div class="col-xs-8">
+                    <input id="welcome-message" class="form-control" placeholder="(optional) Enter welcome message here" value="{{ DEFAULT_WELCOME_CUSTOMIZABLE }}" />
+                    <div id="welcome-message-legally-required">{{ LEGALLY_REQUIRED }}</div>
+                </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="inactive-limit" class="col-xs-4 control-label">
+                <span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" data-placement="bottom"
+                      title="Number of ignored Questions before user is considered inactive and Instant Census stops messaging the user. (Setting this to 0 will disable this functionality.)"></span>
+                Non-Response Limit:
+            </label>
+            <div class="col-xs-8">
+                <input id="inactive-limit" class="form-control" placeholder="Enter non-response limit here" value="5" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inactive-time-limit" class="col-xs-4 control-label">
+                <span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" data-placement="bottom"
+                      title="Number of hours of inactivity by user allowed before they are considered inactive. (Setting this to 0 will disable this functionality.)"></span>
+                Inactive Time Limit:
+            </label>
+            <div class="col-xs-8">
+                <input id="inactive-time-limit" class="form-control" placeholder="Enter inactive time limit here" value="0" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="area-code" class="col-xs-4 control-label">
+                <span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" data-placement="bottom"
+                      title="(Optional) Instant Census will preferentially assign, if available, system phone numbers (the phone number from which messages are sent) with this 3 digit area code to this cohort."></span>
+                Desired Area Code:
+            </label>
+            <div class="col-xs-8">
+                <input id="area-code" class="form-control" placeholder="(optional) Enter desired area code here" />
+            </div>
+        </div>
+    </div>
+{% endcall %}

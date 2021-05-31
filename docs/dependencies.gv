@@ -1,0 +1,26 @@
+// cd docs; dot -Tsvg -O dependencies.gv 
+digraph Dependencies {
+    graph [rankdir=LR];
+	tests [label="tests\n(incl manage.py)"];
+	server_conf [label="Server Config"];
+	supertools [label="supertools\n(incl cron.py)"];
+	analytics [label="analytics"];
+	backend [label="backend"];
+	frontend [label="frontend\n(incl app.py)"];
+	database [label="database"];
+	parsers [label="parsers"];
+	utils [label="utils"];
+	constants [label="constants"];
+	tests -> supertools;
+	tests -> frontend;
+	server_conf -> frontend;
+	supertools -> backend;
+	supertools -> analytics;
+	frontend -> backend;
+	analytics -> database;
+	backend -> database;
+	backend -> parsers;
+	database -> utils;
+	parsers -> utils;
+	utils -> constants;
+}

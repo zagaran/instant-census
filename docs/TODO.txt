@@ -1,0 +1,17 @@
+Move item up/down
+Turn protasis of if/then and set-to to dropdown on click
+
+Edit question details
+Create JavaScript Function for each action which logs data needed by backend
+
+Collapsing
+
+Highlighting
+
+start and end dates for recurring
+
+rename schedules to one-time
+
+grab-bag alternatives: batch, spread-out
+Conditionals can only have valid response as apodasis
+display if no connection to backend or error or something

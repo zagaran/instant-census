@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}CRC Demo | Instant Census{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="/static/css/demo.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/libraries/nv.d3.min.css">
+    <style>
+        /* disable navigation */
+        #top-nav .list-inline :not(:first-child) {
+            display: none;
+        }
+        /* replace logo */
+        #logo-li {
+            background: url("/static/img/instant_census_logo.png") no-repeat center;
+            background-size: 254px 40px;
+            width: 284px;
+        }
+        #logo-li a {
+            display: none;
+        }
+    </style>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        var COHORTS = {{ cohorts|safe }};
+        var QUESTIONS = {{ questions|safe }};
+    </script>
+    <script type="text/javascript" src="/static/javascript/libraries/d3.min.js"></script>
+    <script type="text/javascript" src="/static/javascript/libraries/nv.d3.min.js"></script>
+    <script src="/static/javascript/demo.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <button style="opacity: 0; position: absolute; left: 0; top: 96px; height: 20px; width: 20px;" onclick="$('.options').toggle()"></button>
+        <div class="options" style="display: none;">
+            <div class="row">
+                <div class="pull-right form-inline indent-2">
+                    <label for="attribute-option">Attribute:</label>
+                    <select id="attribute-option" class="indent-1 form-control"></select>
+                </div>
+                <div class="pull-right form-inline">
+                    <label for="cohort-option">Cohort:</label>
+                    <select id="cohort-option" class="indent-1 form-control"></select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="pull-right form-inline">
+                    <label for="question-option-2">Question 2:</label>
+                    <select id="question-option-2" class="form-control"></select>
+                </div>
+                <div class="pull-right form-inline">
+                    <label for="question-option-1">Question 1:</label>
+                    <select id="question-option-1" class="form-control"></select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <h1>Live Demo</h1>
+                <h4>Text <b id="text-in-number">(617) 500-1323</b> to see your responses show up in real time!</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-7">
+                <h2>On a scale of 1 to 10, how much have you enjoyed CRC so far?</h2>
+                <div class="loading">
+                    <span class="glyphicon glyphicon-refresh spinning"></span> Generating Report...
+                </div>
+                <div class="svg-container">
+                    <svg id="demo-svg"></svg>
+                </div>
+            </div>
+            <div class="col-xs-4 col-xs-offset-1">
+                <div class="row">
+                    <h2 id="question-1-text"></h2>
+                    <h4><i>Most recent 5 responses:</i></h4>
+                    <ul id="question-1-answers" class="text_answers"></ul>
+                </div>
+                <div class="row">
+                    <h2 id="question-2-text"></h2>
+                    <h4><i>Most recent 5 responses:</i></h4>
+                    <ul id="question-2-answers" class="text_answers"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}500 | Instant Census{% endblock %}
+
+{% block page_name %}Error: (500){% endblock %}
+
+{% block content %}
+<div class="container">
+    <img src="/static/img/ICLogo-dark.png" class="img-responsive img-center" />
+    <div class="error-box">
+        <h2>Whoops.</h2>
+        <br /><br />
+        <p>Looks like something broke. Don't panic.</p>
+        <p>We track these errors automatically and should have it fixed in a jiffy.</p>
+        <p>Send us an email at <a href="mailto:support@instantcensus.com" target="_blank">support@instantcensus.com</a> if you would like assistance.</p>
+    </div>
+</div>
+{%endblock%}

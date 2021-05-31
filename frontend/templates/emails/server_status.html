@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <div id="wrapper"> 
+        <h1>Server Statuses <span>({{time}})<span></h1>
+        <table align='justify'>
+            <thead>
+                <th>IP Address</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Mongo</th>
+            </thead>
+            <tbody>
+                {% for server, info in data.iteritems() %}
+                <tr>
+                    <td width='40%'>{{server}}</td>
+                    <td width='28%'>{{info['name']}}</td>
+                    <td {% if info['status'] == 200 %} bgcolor='green' {% else %} bgcolor='red'{% endif %} width='16%'>
+                        {{info['status']}}</td>
+                    <td width='16%' {% if info['mongo'] %} bgcolor='green' {% else %} bgcolor='red'{% endif %}></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>  
+    </div>
+</body>
+
+<style type="text/css">
+    #wrapper{
+        width:100%;
+    }
+    h1 span{
+        font-size: 16px;
+    }
+     table{
+        text-align: center;
+        border-collapse:collapse
+    }
+    td, th{
+        border-bottom: 1px solid #444;
+        border-right:1px solid #444;
+    }
+
+</style>
+
+</html>

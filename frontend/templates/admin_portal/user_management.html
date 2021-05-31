@@ -1,0 +1,336 @@
+{% extends "base.html" %}
+
+{% block title %}User Management | Instant Census{% endblock %}
+        
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="/static/css/libraries/dataTables.bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/user_management.css">
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        var TIMEZONE_SUPPORT = {{ "true" if TIMEZONE_SUPPORT else "false" }};
+        var COHORT_COMPLETED = {{ "true" if COHORT_COMPLETED else "false" }};
+        var FORBIDDEN_CUSTOM_ATTRIBUTES = {{ FORBIDDEN_CUSTOM_ATTRIBUTES|safe }};
+    </script>
+    <script type="text/javascript" language="javascript" src="/static/javascript/libraries/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" language="javascript" src="/static/javascript/libraries/dataTables.bootstrap.js"></script>
+    <script type="text/javascript" language="javascript" src="/static/javascript/libraries/dataTables.fixedColumns.js"></script>
+    <script type="text/javascript" src="/static/javascript/user_management.js"></script>
+    {% if errors %}
+        <script>$("#user-upload-errors").modal("show");</script>
+    {% endif %}
+{% endblock %}
+
+{% block actions %}
+    {% if not COHORT_COMPLETED %}
+        <li><a href="javascript:void(0)" onclick="launchAddUser()">Add User</a></li>
+        <li><a href="javascript:void(0)" onclick="launchAddAttribute()">Add User Attribute</a></li>
+    {% endif %}
+    <li><a href="/download/users/{{ cohort['_id'] }}">Download Users Data</a></li>
+    {% if not COHORT_COMPLETED %}
+        <li><a href="javascript:void(0)" onclick="launchUploadUserSpreadsheet()">Upload User Spreadsheet</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div id="loading-container" class="row">
+            <div class="col-xs-12 text-center">
+                <span class="glyphicon glyphicon-refresh spinning"></span> Loading Users...
+            </div>
+        </div>
+        <div id="users-container">
+            <div id="no-users-container">
+            {% if users_count == 0 %}
+                <div class="alert alert-warning">
+                    <b>There are currently no users for this cohort.</b>
+                    <p>Click "Add User" in the above "Actions" dropdown menu to create a new user.</p>
+                </div>
+            {% endif %}
+            </div>
+            <div id="no-users-container-hidden"></div>
+            <table id="users" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                <thead>
+                    <th class="no-sort"></th>
+                    <th>Phone Number</th>
+                    <th>Status</th>
+                    <th>Timezone</th>
+                    {% for attribute, default in custom_attributes.items()|sort %}
+                        <th>{{ attribute|upper }}<span class="edit-custom-attribute glyphicon glyphicon-pencil pull-right" data-attribute="{{ attribute|upper }}" data-default="{{ default }}"></span></th>
+                    {% endfor %}
+                </thead>
+                <tfoot>
+                    <th></th>
+                    <th>Phone Number</th>
+                    <th>Status</th>
+                    <th>Timezone</th>
+                    {% for attribute in custom_attributes|sort %}
+                        <th>{{ attribute|upper }}</th>
+                    {% endfor %}
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    {% from "base.html" import generate_modal %}
+    <!-- ********** this block also exists exactly the same way in survey_builder.html ********** -->
+    <!-- add attribute modal -->
+    {% call generate_modal("add-attribute",
+                           "Add User Attribute",
+                           "_none",
+                           "addUserAttribute()",
+                           "Add User Attribute",
+                           "_none"
+                          ) %}
+        <div class="form-horizontal modal-form row">
+            <div class="form-group">
+                <label for="attribute-name" class="col-xs-3 control-label">Attribute Name:</label>
+                <div class="col-xs-9">
+                    <input id="attribute-name" class="form-control" placeholder="Enter attribute name here" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="default-value" class="col-xs-3 control-label">Default Value:</label>
+                <div class="col-xs-9">
+                    <input id="default-value" class="form-control" placeholder="Enter default value here" />
+                </div>
+            </div>
+            <div class="alert alert-warning">
+                <p>
+                    <b>Note:</b> The default value is the attribute value assigned to a user at creation. It is
+                    <u>strongly</u> encouraged that a non-blank default value is assigned. This is especially
+                    important when this attribute is used in a text message as a custom merge field.
+                </p>
+                <p>
+                    &nbsp;<a id="toggle-default-value-example" class="pull-right" href="javascript:void(0);">View example...</a>
+                </p>
+                <div id="default-value-example">
+                    <p>
+                        <b>For example, consider the following message:</b>
+                        <div class="alert alert-default">
+                            "Do you still live in [[CITY]]?"
+                        </div>
+                        Having the default value "the same city" would yield the following message for users with no
+                        explicit value set for the attribute "CITY":
+                        <div class="alert alert-default">
+                            "Do you still live in the city?"
+                        </div>
+                        However, if the attribute "CITY" had a blank default message, a user with no explicit value set
+                        would be sent the following message instead:
+                        <div class="alert alert-default">
+                            "Do you still live in ?"
+                        </div>
+                    </p>
+                    <p>
+                        Depending on your needs, giving careful thought to the custom attribute default value can vastly
+                        improve your users' experiences.
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% endcall %}
+    <!-- ********** /this block also exists exactly the same way in survey_builder.html ********** -->
+    <!-- add user modal -->
+    {% call generate_modal("add-user",
+                           "Add User",
+                           "_none",
+                           "addUser()",
+                           "Add User",
+                           "_none"
+                          ) %}
+        <div class="form-horizontal modal-form row">
+            <div class="form-group">
+                <label for="phone-number" class="col-xs-3 control-label">Phone Number:</label>
+                <div class="col-xs-9">
+                    <input id="phone-number" class="form-control" placeholder="Enter phone number here" />
+                </div>
+            </div>
+        </div>
+    {% endcall %}
+    <!-- change user status modal -->
+    {% call generate_modal("change-user-status",
+                           "Change Status",
+                           "_none",
+                           "",
+                           "Change Status",
+                           "_none"
+                          ) %}
+        <p>
+            <b>Set Status to</b>                            
+            <select id="set-status-value" class="form-control" onchange="newStatus()">
+                <option value="active">active</option>
+                <option value="paused">paused</option>
+                <option value="completed">completed</option>
+            </select>
+        </p>
+        <p id="change-user-status-message">This action will send the following message to the user:</p>
+        <p id="change-user-status-pause-message" class="alert alert-default">"{{ DEFAULT_COHORT_PAUSE }}"</p>
+        <p id="change-user-status-activate-message" class="alert alert-default">"{{ DEFAULT_USER_RESTART }}"</p>
+    {% endcall %}
+    <!-- delete user modal -->
+    {% call generate_modal("delete-user",
+                           "Delete User",
+                           "_none",
+                           "",
+                           "Delete User",
+                           "_none",
+                           "",
+                           "danger"
+                          ) %}
+        <p>
+            <b>
+                Are you sure you want to delete
+                "<span id="delete-user-phone-number"></span>"?
+            </b>
+        </p>
+    {% endcall %}
+    <!-- delete user modal -->
+    {% call generate_modal("change-user-timezone",
+                           "Change User Timezone",
+                           "_none",
+                           "",
+                           "Change User Timezone",
+                           "_none"
+                          ) %}
+        <p>What would you like to set this user's timezone to?</p>
+        <select id="change-user-timezone-choices" class="form-control">
+        {% for timezone in ALL_TIMEZONES %}
+            <option value={{ timezone }}>{{ timezone }}</option>
+        {% endfor %}
+        </select>
+        <br />
+        <div class="alert alert-warning">
+            <b>WARNING!</b> Changing a user's timezone too close to the start of a schedule
+            or while the user is in an active survey session may lead to undesired behavior
+            due to the time changes.
+        </div>
+    {% endcall %}
+    <!-- edit attribute -->
+    {% call generate_modal("edit-user-attribute",
+                       "Edit User Attribute",
+                       "_none",
+                       "editUserAttribute()",
+                       "Edit User Attribute",
+                       "_none"
+                      ) %}
+        <div class="form-horizontal modal-form row">
+            <input id="previous-attribute-name" type="hidden" />
+            <input id="previous-default-value" type="hidden" />
+            <div class="form-group">
+                <label for="attribute-name" class="col-xs-3 control-label">Attribute Name:</label>
+                <div class="col-xs-9">
+                    <input id="edit-attribute-name" class="form-control" placeholder="Enter attribute name here" />
+                </div>
+            </div>
+            <div class="alert alert-warning">
+                Renaming this user attribute's name will also automatically rename any instances of custom merge fields using this attribute in the survey builder.
+            </div>
+            <div class="form-group">
+                <label for="default-value" class="col-xs-3 control-label">Default Value:</label>
+                <div class="col-xs-9">
+                    <input id="edit-default-value" class="form-control" placeholder="Enter default value here" />
+                </div>
+            </div>
+            <div class="alert alert-warning">
+                Editing this user attribute's default value will only affect newly created users. It will <u>NOT</u> automatically edit existing users' attribute values.
+            </div>
+        </div>
+    {% endcall %}
+    <!-- user upload errors -->
+    {% call generate_modal("user-upload-errors",
+                           "User Upload Errors",
+                           "_none",
+                           "",
+                           "OK",
+                           "_none",
+                           "True"
+                          ) %}
+        <h2 class="inline-heading">Whoops.</h2>
+        <br>
+        <p>
+            Looks like the file you are uploading has a few problems. No changes were made to the database. Please
+            resolve the following problems by fixing the rows or removing them and try uploading the file again:
+        </p>
+        <br>
+        <div id="user-upload-errors-list"></div>
+        <hr />
+        <p>
+            Send us an email at <a href="mailto:support@instantcensus.com" target="_blank">support@instantcensus.com</a>
+            if you would like assistance.
+        </p>
+    {% endcall %}
+    <!-- user upload errors -->
+    {% call generate_modal("upload-user-spreadsheet",
+                           "Upload User Spreadsheet",
+                           "_none",
+                           "uploadUserSpreadsheet()",
+                           "Upload",
+                           "_none"
+                          ) %}
+        <div class="row">
+            <p>
+                You can create new users and modify existing users by uploading a CSV or Excel spreadsheet. 
+                Users are identified by their phone number. Any new user attributes (i.e. new columns) that are uploaded will 
+                possess an empty default value. There are two types of upload:
+            </p>
+            <br>
+            <div class="col-xs-11">
+                <ol>
+                    <li>
+                        <b>Safe Upload:</b> This option will <u>only</u> allow you to create new users. It <u>will not modify</u>
+                        existing user attributes for existing users.
+                    </li>
+                    <br>
+                    <li>
+                        <b>Unrestricted Upload:</b> This option <u>will</u> allow you to modify existing user attributes for existing 
+                        users. This will necessarily overwrite existing attribute values stored for existing users. 
+                        This option will also create new users for rows with new phone numbers. Note that empty cells will 
+                        override existing values as empty values.
+                    </li>
+                </ol>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <form id="user-spreadsheet-upload" action="/upload_user_file" enctype="multipart/form-data" method="post">
+                    <input name="cohort_id" type="hidden" value="{{ cohort['_id'] }}" />
+                    <div class="input-group">
+                        <div class="input-group-btn">
+                            <div class="btn btn-primary btn-file">
+                                Browse... <input id="user-spreadsheet" name="user_spreadsheet" accept=".xls, .xlsx, .csv" type="file" />
+                            </div>
+                        </div>
+                        <input id="user-spreadsheet-name" type="text" class="form-control" readonly>
+                    </div>
+                    <div class="indent-1">
+                        <h4>Options</h4>
+                        <div class="radio">
+                            <label>
+                                <input id="user-spreadsheet-upload-options-safe" name="user_spreadsheet_upload_options" type="radio" value="safe" checked />
+                                Safe Upload (only allows new user creation)
+                            </label>
+                        </div>
+                        </form>
+                        <div class="radio">
+                            <label>
+                                <input id="user-spreadsheet-upload-options-unrestricted" name="user_spreadsheet_upload_options" type="radio" value="unrestricted" />
+                                Unrestricted Upload (can also modify existing user data)
+                            </label>
+                        </div>
+                    </div>
+                    <div id="user-spreadsheet-upload-warning" class="alert alert-warning">
+                        <b>WARNING!</b> This option can override existing data and is not reversible. 
+                    </div>
+                        Please make sure your spreadsheet accurately reflects your intended modification before uploading. 
+                </div>
+            </form>
+        </div>
+        <hr />
+        <p>
+            Send us an email at <a href="mailto:support@instantcensus.com" target="_blank">support@instantcensus.com</a>
+            if you have any questions or require assistance.
+        </p>
+    {% endcall %}
+
+{% endblock %}

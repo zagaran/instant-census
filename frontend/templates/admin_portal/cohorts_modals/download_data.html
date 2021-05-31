@@ -1,0 +1,108 @@
+<!-- download data modal -->
+{% from "base.html" import generate_modal %}
+{% call generate_modal("download-data-%s" % cohort["_id"],
+                       "Download Data",
+                       "_none",
+                       "downloadData('%s')" % cohort["_id"],
+                       "Download Data",
+                       "_none",
+                       false
+                      ) %}
+    <div class="row">
+        <div class="col-xs-12">
+            <p><b>Cohort:</b> "{{ cohort["cohort_name"] }}"</p>
+            <p>Please select the data you wish to download:</p>
+            <form action="/download/custom" type="post" class="form-horizontal">
+                <div class="indent-1">
+                    <div class="checkbox">
+                        <label>
+                            <input id="download-cohort-users" class="download-data-format options-toggle" type="checkbox" data-cohort-id="{{ cohort['_id'] }}" />
+                            <b>Cohort Users</b>
+                        </label>
+                        <div id="download-cohort-users-options-div" class="indent-2">
+                            <a href="javascript:void(0);" onclick="downloadCohortUsersOptionsSelect('all')">Select All</a>
+                            |
+                            <a href="javascript:void(0);" onclick="downloadCohortUsersOptionsSelect('none')">Select None</a>
+                            <div class="checkbox">
+                                <label>
+                                    <input id="user-status-active" type="checkbox" checked />
+                                    Active Users (status: <u>active</u>)
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input id="user-status-pending" type="checkbox" checked />
+                                    Awaiting activation (status: <u>pending</u>)
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input id="user-status-invalid" type="checkbox" checked />
+                                    Awaiting valid access code (status: <u>invalid</u>)
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input id="user-status-waitlist" type="checkbox" checked />
+                                    Waitlisted (status: <u>waitlist</u>)
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input id="user-status-paused" type="checkbox" checked />
+                                    Paused (status: <u>paused</u>)
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input id="user-status-disabled" type="checkbox" checked />
+                                    Texted STOP (status: <u>disabled</u>)
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input id="user-status-inactive" type="checkbox" checked />
+                                    Disabled due to inactivity (status: <u>inactive</u>)
+                                </label>
+                            </div>
+                            {% if SHOW_DELETED_USERS %}
+                                <div class="checkbox">
+                                    <label>
+                                        <input id="user-status-deleted" type="checkbox" checked />
+                                        Deleted by admin (status: <u>deleted</u>)
+                                    </label>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="download-user-message-histories" class="download-data-format options-toggle" type="checkbox" data-cohort-id="{{ cohort['_id'] }}" />
+                            <b>User Message Histories</b>
+                        </label>
+                    </div>
+                    <div id="download-user-message-histories-options-div" class="indent-2">
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="download-user-message-histories-options" id="download-user-message-histories-all" value="all" checked />
+                                All Messages
+                            </label>
+                        </div>
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="download-user-message-histories-options" id="download-user-message-histories-incoming" value="incoming" />
+                                Only Incoming Messages
+                            </label>
+                        </div>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="download-question-answer-data" class="download-data-format" type="checkbox" data-cohort-id="{{ cohort['_id'] }}" />
+                            <b>Question / Answer Data</b>
+                        </label>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endcall %}

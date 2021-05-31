@@ -1,0 +1,39 @@
+# IC Requirements
+Flask
+mongolia>=0.4.1
+cronutils>=0.2.1
+twilio==5.6.0
+nose
+xlrd
+mongobackup
+flask-markdown
+cffi
+bcrypt
+pytz
+Werkzeug==0.16.1
+
+# Testing dependencies
+mock
+unittest2
+
+# For Management Commands
+ipython
+
+# SSL Dependencies
+pyopenssl
+ndg-httpsclient
+pyasn1
+
+# Server Management Dependencies
+boto
+SoftLayer
+
+# Useful if doing virtualenv
+virtualenv
+
+# Used in Experimental Parsers
+dateutils
+pattern
+
+# Sentry Error Reporting
+raven[flask]

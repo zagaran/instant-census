@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Preview Message | Instant Census{% endblock %}
+
+{% block javascript %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h4>Preview Messages</h4>
+    <br />
+    <p>
+        <b>Note:</b> the preview function shows a preview of what the messages for all recipients will look like after
+        merging in custom fields and does not include survey/scheduling logic.
+    </p>
+    <br />
+    <table class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+          <tr>
+            <th>Phone Number</th>
+            <th>Message Preview</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for (pn, message) in messages %} 
+              <tr>
+                <td>{{ pn|phonenum_humanize_filter}}</td>
+                <td>{{ message }}</td>
+              </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+<!-- delete cohort confirmation modal -->
+{% from "base.html" import generate_modal %}
+{% call generate_modal("delete-cohort-modal-%s" % cohort["_id"],
+                       "Delete Cohort Confirmation",
+                       "/delete/%s" % cohort["_id"],
+                       "",
+                       "Yes, Delete Cohort",
+                       "_none",
+                       "",
+                       "danger"
+                      ) %}
+    <p>Are you sure you want to delete Cohort "{{ cohort["cohort_name"] }}"?</p>
+    <div class="alert alert-danger">
+        <p>
+            <b>WARNING:</b> This will delete all data for this cohort.
+        </p>
+    </div>
+{% endcall %}

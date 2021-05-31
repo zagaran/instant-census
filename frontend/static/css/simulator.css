@@ -1,0 +1,93 @@
+.box3 .lightgrey .longer {
+    background-color: #fbfbff;
+}
+.month td {
+    padding: 10px;
+}
+.month th {
+    padding-top: 10px;
+}
+.month {
+    font-size: 16px;
+}
+#background {
+    background: url("/static/img/Android.png") no-repeat scroll left top transparent;
+    height: 800px;
+    margin: 15px 0 -33px 50px;
+    position: absolute;
+    width: 475px;
+    bottom: 200px;
+}
+p.message {
+    font: 22px/25px Helvetica,Arial,sans-serif;
+}
+#conversation {
+    width: inherit;
+    height: 640px;
+    overflow-y: scroll;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 84px;
+}
+//.phone-case {
+//    background: url("../img/phone_case.png") no-repeat scroll left top transparent;
+//    position: relative;
+//    background-size: 580px 990px;
+//    height: 95%;
+//}
+.gBoxTall {
+    background: url("/static/img/AndroidMessageSelf.png") no-repeat scroll left top transparent;
+    clear: both;
+    float: right;
+    margin-top: 15px;
+    max-width: 270px;
+    padding-left: 22px;
+    right: 0;
+    word-wrap: break-word;
+}
+.gBoxTall .right {
+    background: url("/static/img/AndroidMessageSelf.png") no-repeat scroll right top transparent;
+}
+.gBoxTall .right p {
+    margin-left: -5px;
+    padding: 8px 30px 0 0;
+}
+.gBoxTall .bottom {
+    background: url("/static/img/AndroidMessageSelf.png") no-repeat scroll left bottom transparent;
+    height: 20px;
+    margin: -27px 0 0 -22px;
+}
+.gBoxTall .bottom .right {
+    background: url("/static/img/AndroidMessageSelf.png") no-repeat scroll right bottom transparent;
+    float: right;
+    height: 20px;
+    width: 43px;
+}
+.wBoxTall {
+    background: url("/static/img/AndroidMessageOther.png") no-repeat scroll right top transparent;
+    clear: both;
+    float: left;
+    margin-top: 15px;
+    max-width: 260px;
+    padding-right: 33px;
+    left: 0;
+    word-wrap: break-word;
+}
+.wBoxTall .left {
+    background: url("/static/img/AndroidMessageOther.png") no-repeat scroll left top transparent;
+}
+.wBoxTall .left p {
+    margin-right: -5px;
+    padding: 8px 0 0 30px;
+}
+.wBoxTall .bottom {
+    background: url("/static/img/AndroidMessageOther.png") no-repeat scroll right bottom transparent;
+    height: 20px;
+    margin: -27px -33px 0 0;
+}
+.wBoxTall .bottom .left {
+    background: url("/static/img/AndroidMessageOther.png") no-repeat scroll left bottom transparent;
+    float: left;
+    height: 20px;
+    width: 43px;
+}

@@ -1,0 +1,2073 @@
+{% extends "base.html" %}
+
+{% block title %}Documentation | Instant Census{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="/static/css/message_sender.css">
+{% endblock %}
+
+{% block javascript %}
+    <script src="/static/javascript/docs.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container section">
+<a href="/tos">Instant Census Terms & Services</a>
+{% filter markdown %}
+{# Markdown syntax: http://daringfireball.net/projects/markdown/syntax #}
+
+# Instant Census Documentation
+
+_Last updated: Monday, March 21, 2016_
+
+---
+
+Welcome to Instant Census! This documentation should help you get the most out of
+your Instant Census deployment.<This documentation is meant to be detailed and
+technical in nature; for common questions in a quick & easy format, please see our
+FAQ page.>
+
+{% endfilter %}
+{% filter markdown %}
+
+## Table of Contents
+[TOC]
+
+## 1.0.0 Navigation
+
+In order to help you Navigate Instant Census, a **Navigation Bar** exists at the
+top of every page of the Website. This Bar will follow you as you scroll up or down,
+allowing you to conveniently access the entire site.
+
+* Clicking the Instant Census logo will take you to the **Cohorts** Page. From there
+  you will be able to manage, create, and delete Cohorts.
+* If you have already navigated to within a particular **Cohort**, clicking the
+  **Recipient Management** tab will take you to the page where you can add and edit Recipients.
+* Similarly, if you are already within a **Cohort**, clicking the **Survey Builder**
+  tab will take you to the page where you can build, edit, and manage **Schedules**.
+* The **Inbox** tab will take you to a page displaying all of the Recipients who 
+  have sent in messages your deployment has been customized to flag, allowing you
+  to take any further action that might be necessary. For details on which messages
+  your deployment is flagging as "Needs Review", please contact [support@instantcensus.com](mailto:support@instantcensus.com). 
+* The **Cohorts** tab will take you back to the Cohorts Page, just like clicking
+  the Instant Census logo.
+* The **Docs** tab will take you back here.
+* To the right of the Docs tab is the **Logout** Button; clicking this will log 
+  you out of the system.
+  
+Directly beneath the Navigation Bar is another bar. If you are within
+a particular Cohort, the Cohort's **Name** will be displayed there. Furthermore,
+certain pages will have a Dropdown menu of **Actions** in the left-hand side of
+that bar. If a page has any such Actions, they will be more fully described in the
+documentation for that page. If neither of the above is true, the bar will show 
+you the name under which you are logged in.
+
+## 2.0.0 Cohorts
+ 
+After logging into Instant Census, you will be taken to the Cohorts page. This page
+allows you to create and manage your **Cohorts**, and navigate to the various other 
+features of Instant Census. In order to return to this page, you may either click
+the Cohorts tab in the **Navigation Bar**, or click the Instant Census logo on that
+same Bar.
+
+### 2.1.0 What is a Cohort?
+
+Cohorts are the highest level of organization for Instant Census. Each Cohort has
+a group of **Recipients** and **Schedules** attached to it. Each Recipient in a Cohort will
+only receive Schedules from that Cohort, and each Schedule on a Cohort will only
+be sent to Recipients on that same Cohort. Basically, Cohorts allow you to group together
+people to whom you want to send the same content. In addition, each Cohort has
+certain settings which affect everyone on that Cohort.
+
+Each Cohort is displayed separately on the Cohorts page, along with useful information
+about that Cohort. In particular, it shows you the number of Recipients currently associated
+with that Cohort, the number of Messages sent in by Recipients that Instant Census couldn't
+process correctly, the total number of SMS Messages, both sent out and received,
+associated with that Cohort, the Phone Numbers from which Recipients on the Cohort
+will receive Messages, and the date and time on which the Cohort was created.
+
+Additionally, it displays a number of configurable options for that Cohort: 
+
+* Each Cohort has a unique, but editable, **Name** by which it can be identified. 
+* The **Desired Area Code** indicates the area code from which you would like your
+  messages to be sent. That is, Instant Census will attempt to communicate with
+  Recipients using a Phone Number with the area code indicated. You do not have to specify
+  a Desired Area Code if you do not wish to do so.
+* The **Inactive Limit** indicates the number of **Questions** in a row a Recipient must
+  ignore in order to automatically be set to **Inactive**.
+* The **Welcome Message** is sent to every Recipient on a Cohort when they are first
+  added to that Cohort. If either the Cohort or the Recipient is not **Active** at that
+  time, this message is sent as soon as they become eligible to receive messages.
+  Note that only the first part of the Welcome Message is editable; the second part,
+  indicating how a Recipient may opt-out of receiving communications, *must* be sent to
+  every Recipient when they become Active.
+  
+The Buttons on the right of each Cohort let you further interact with that Cohort:
+
+* Clicking **Manage Recipients** or **Survey Builder** will take you to pages that let
+  you interact with the Recipients and Schedules on that particular Cohort.
+* The **Edit Cohort** Button will launch a pop-up allowing you to edit the configurable
+  options of the Cohort.
+* The **Download Data** Button allows you to Download the Data associated with that
+  Cohort.
+* The **Mark Cohort as Completed** button will allow you to end all activities on a Cohort.
+  The Cohort will be set to the **Completed** Status, and no new Messages will be
+  sent from the Cohort. The Cohort will also no longer be able to receive new Messages.
+  You will be unable to make any changes to the Cohort, but all of its data will
+  still be available for perusal. This means that the Cohort will no longer cost
+  any money. This action cannot be undone.
+* Finally, to the left of the Mark Cohort as Completed Button and beneath the Survey Builder 
+  Button, is the **Cohort Status** Button. This Button indicates the current **Status**
+  of the Cohort. A Cohort may be **Pending**, **Paused**, **Active** or Completed, and by default they start
+  Pending. A Paused or Pending Cohort may have Recipients and Schedules attached to it, but will not
+  send anything to its Recipients. A Pending Cohort has no outgoing numbers, and
+  cannot communicate with Recipients. Thus, like a Completed Cohort you will not be
+  charged for Pending Cohorts. A Paused Cohort, by contrast, does have outgoing phone
+  numbers. Recipients may text in to a Paused Cohort, and their Messages will be 
+  stored and made available for your viewing and use. You will be charged for all
+  Active Cohorts will send and receive Messages normally. You will be charged for
+  all Active and Paused Cohorts. Clicking the Cohort Status Button will change a 
+  Pending Cohort to Active, a Paused Cohort to Active, or an Active Cohort to Paused. 
+  Additionally a Message will be sent to all Recipients on that Cohort informing 
+  them of the Cohort's change in Status.  
+  
+Finally, in the top right of the Cohort, to the right of the Cohort's Name, is the
+**Delete Cohort** Button. Clicking this will allow you to completely and irrevocably
+eliminate a Cohort. It behaves similarly to marking the Cohort as Completed, only
+the Cohort will no longer even be displayed, and any data on the Cohort will no
+longer be accessible. If you click this, it will launch a confirmation Popup. If
+you decide against deleting the Cohort, click the **X** in the top right or the **Cancel**
+Button in the bottom right to dismiss the Popup and not delete the Cohort. If you
+would still like to delete the Cohort, click the **Yes** Button in the bottom right
+of the Cohort. You cannot undo this action once you have taken it.
+
+### 2.2.0 Adding Cohorts
+
+To add a new **Cohort**, hover your mouse over the **Actions** Dropdown just below the
+Instant Census logo in the **Navigation Bar**, then click the **Add Cohort** Button
+that appears. This will launch a Popup which you can use to configure the options
+for your new Cohort. If you decide against creating a new Cohort, you may click
+the **X** at the top right of the popup, the **Cancel** Button on the bottom right, or
+anywhere not within the Popup. This will dismiss the Popup without creating a new
+Cohort.
+
+* The **Name** of the new Cohort should be entered in the Cohort Name field at the 
+  top of the Popup. This Name may contain letters, numbers, and spaces, but it may 
+  not be more than 100 characters, and may not be the same as the name of any Cohort 
+  that already exists.
+* The **Welcome Message** field allows you to configure the Welcome Message for the
+  new Cohort. This Welcome Message will be sent to every **Recipient** on the Cohort, either
+  upon their creation *or* upon them first becoming eligible to receive Messages. While
+  the first part of the Welcome Message may be changed to anything you want, the second
+  part *must* be sent to every Recipient as is. This section is displayed exclusively for your
+  reference, and may not be changed or altered.
+* The **Inactive Limit** sets the number of **Questions** a Recipient must ignore in
+  a row before they are automatically set to **Inactive**. **Messages** and other communications
+  that do not expect a response do not count toward this total, and as soon as a
+  Recipient responds the count towards the Limit is set back to zero. Likewise, if the
+  Recipient is reactivated, either by you or them, then the count toward this Limit
+  is reset.
+* The **Desired Area Code** field lets you set the area code from which you would
+  like Recipients to receive Messages. This field is completely optional. If a valid
+  United States area code is entered, then Instant Census will attempt to make sure
+  Recipients receive communications from Phone Numbers with that area code, or a geographically
+  nearby area code.
+  
+When you have configured these options as you desire, clicking the **Okay** Button
+at the bottom right of the Popup will create a Cohort with those attributes. If
+you want to change any of these configurations later, you may do so by pressing
+the **Edit Cohort** Button for that Cohort. Every Cohort is automatically created
+with the **Pending** Status. To change this, click the **Cohort Status** Button on
+the bottom left of the Cohort's Button Panel.
+
+By default, Cohorts are created so that only Recipients you as administrator add
+are allowed to join the Cohort. Individuals outside the Recipient pool who attempt
+to message one of your Cohorts' Phone Numbers are brought to your attention, but
+not on-boarded as Recipients. If you would like individuals outside the current
+Recipient pool to be able to add themselves to your Cohorts, contact [support@instantcensus.com](mailto:support@instantcensus.com).
+
+### 2.3.0 Editing Cohorts
+
+In order to edit any of the configurable attributes of a **Cohort**, click the 
+**Edit Cohort** button in the top right of the Cohort you wish to edit. This will 
+launch a Popup using which you can configure the options for the Cohort. This Popup
+will already be populated with the current attributes for the Cohort. If you decide 
+against editing the Cohort, you may click the **X** at the top right of the popup, the 
+**Cancel** Button on the bottom right, or anywhere not within the Popup. This will 
+dismiss the Popup without saving any of the changes you have made to the Cohort.
+
+* The Cohort Name field allows you to change the **Name** of the Cohort. You may
+  change a Cohort's name to any combination of alphanumeric characters. However,
+  this name may not be more than 100 characters long, and cannot be the same as
+  the Name of any existing Cohort.  
+* The **Welcome Message** field allows you to edit the Cohort's Welcome Message.
+  This Welcome Message is sent to **Recipients** the first time they become eligible
+  to receive Messages from the system. While the first part of the Welcome Message 
+  can be edited freely, the second part *must* be sent to each and every 
+  Recipient. This section is displayed exclusively for your reference, and may not be 
+  changed or altered. Recipients already active on the system when you change this Message
+  will not receive the new Welcome Message; this will only be sent to Recipients who
+  are subsequently added to the system. 
+* The **Inactive Limit** sets the number of **Questions** a Recipient must ignore in
+  a row before they are automatically set to **Inactive**. Messages and other communications
+  that do not expect a response do not count toward this total, and as soon as a
+  Recipient responds the count towards the Limit is set back to zero. Likewise, if the
+  Recipient is reactivated, either by you or them, then the count toward this Limit
+  is reset. Increasing the Inactive Limit will not automatically reactivate any
+  Recipients already set to **Inactive**; you must reactivate such Recipients manually
+  if you wish to resume contact with them.
+* The Desired Area Code field lets you set the area code from which you would
+  like Recipients to receive Messages. This field is completely optional. If a valid
+  United States area code is entered, then Instant Census will attempt to make sure
+  Recipients receive communications from Phone Numbers with that area code, or a geographically
+  nearby area code. However, changing this value will not change the Phone Number 
+  from which existing Recipients receive Messages. It will only apply to Recipients created
+  after the change, and some of them may receive Messages from Phone Numbers already
+  in use by the system. 
+  
+When you have configured these options as you desire, clicking the **Okay** Button
+at the bottom right of the Popup will save the changes to the Cohort. You may Edit
+a Cohort's attributes any number of times. Note that clicking the Edit Button does
+not allow you to change a Cohort's **Status**. To do this, click the **Cohort Status**
+Button on the bottom left of the Cohort's Button Panel.
+
+### 2.4.0 Cohort Status
+
+A Cohort's **Status** indicates whether or not a Cohort is actively sending out
+**Schedules**. Every Cohort has a Status, which may be **Pending**, **Paused**, 
+**Active**, or **Completed**, and every Cohort is created Paused.
+
+* A Pending Cohort will not send out **Schedules**. It has no Phone Numbers with
+  which to send out messages, and consequently no Phone Numbers to which **Recipients**
+  may send information. The Pending Status allows you to prepare Cohorts for actual
+  use. 
+* A Paused Cohort will not send out Schedules. Recipients may still text in to the
+  system, and their communications will be recorded by the system, but Recipients on
+  a Paused Cohort will send Recipients no new proactive communications from the system.
+* An Active Cohort will send out Schedules to all **Active** Recipients on that Cohort.
+  Thus, in order to actually communicate with your Recipients, they must be on Active
+  Cohorts.
+* A Completed Cohort is finished and can longer take any actions. While all of its
+  data is available for perusal, it can no longer send Messages, can no longer receive
+  Messages, and can never be used again.
+  
+Cohorts are created Pending, in order to prevent incomplete Schedules from being
+sent out to an incomplete Recipient base. Once you are satisfied that a Cohort is ready
+for use, you may simply change the Cohort from Pending to Active to begin sending
+Messages. Likewise, if at any time you feel that a Cohort should be temporarily
+suspended, Pausing it will prevent further Messages from being sent.
+
+The Status of a Cohort is displayed on the **Cohort Status** Button. This Button is
+located on the bottom left of the Cohort's Button Panel, directly beneath the **Survey
+Builder** Button and to the left of the **Mark Cohort as Completed** Button. If this Button
+says 'Cohort Active', then the Cohort is active; if it says 'Cohort Paused' then
+the Cohort  is paused. This Button also changes color depending on the Status of
+the Cohort. Green indicates Active, Grey Pending, Yellow Paused, and faded Green Completed.
+
+This same Cohort Status Button can be used to change the Status of a Cohort. When
+clicked, this button will change the Status of the Cohort from Pending to Active,
+Paused to Active, or Active to Paused. You may change the Status of a Cohort as many times as you like,
+as often as you like. However, whenever a Cohort is changed to Active, all
+Recipients on the Cohort will be sent a Message informing them of the activation. Similarly,
+when a Cohort is changed from Active to Paused, all Recipients on the Cohort will be
+sent a Message informing them that they have been paused. The only exceptions
+are that Recipients added to a Paused Cohort will receive the **Welcome Message** upon
+the Cohort's reactivation, and Recipients who are themselves **Paused**, **Inactive**, 
+or **Disabled** will not receive these Messages. 
+
+In order to set a Cohort to Completed, you must click the Mark Cohort as Completed
+Button. This will launch a Popup describing the ramifications of setting the Cohort's
+Status to Completed, and prompt you to confirm your decision. If you decide against
+setting the Cohort to Completed (which is an irrevocable, unchangeable decision),
+click the **X** at the top right or the **Cancel** Button at the bottom right of the
+Popup. To actually set the Cohort to Completed, click the **Yes, Mark Cohort as
+Completed** Button in the bottom right of the Popup.
+
+### 2.5.0 Other Information
+
+If there are any important limitations governing your use of Instant Census, they
+will be displayed and monitored here. For full details about these limitations,
+please get in touch with [support@instantcensus.com](mailto:support@instantcensus.com).
+
+## 3.0.0 Recipient Management
+
+The Recipient Management Page allows you to view information about, and change the **Attributes**
+of, Recipients. Each **Cohort** has its own Recipient Management Page. To access this page,
+click the **Manage Recipients** Button on the top left of the Cohort's Button Panel on
+the Cohort's Page. If you are already within a particular Cohort, you can instead
+click the Recipient Management tab in the **Navigation Bar**.
+
+### 3.1.0 What is a Recipient?
+
+Recipients are the end Recipients of your **Schedules**, the people who will receive and respond
+to your surveys. Every Recipient belongs to a particular **Cohort**, which controls the
+Schedules they receive and certain other areas of their experience. Each Recipient is 
+primarily identified by their Phone Number, which is of course the essential piece 
+of information needed about a person to be able to send them an SMS survey. On the Recipient 
+Management Page, each of these Recipients is presented as an entry on a table to effectively 
+organize all the Recipients you may have.
+
+### 3.2.0 Reading Recipient Entries
+
+The Recipient Table is the primary method of managing and maintaining Recipients on a particular
+Cohort. The first three columns in the Recipient Table always contain the same information. 
+
+* The first column, which is unlabeled, has a Button for each Recipient which takes you to that Recipient's 
+  **Message Sender**. That page contains more information about that Recipient, including 
+  a complete history of Messages sent between Instant Census and the Recipient, as well 
+  as functionality to send Messages to that Recipient manually.
+* The first column also has a delete Button (to the right of the Message Sender Button)
+  which allows you to delete a Recipient. Clicking this will launch a Popup using 
+  confirming that you wish to delete the Recipient. If you decide against deleting
+  the Recipient, you may click the **X** at the top right of the popup, the **Cancel** 
+  Button on the bottom right, or anywhere not within the Popup. This will dismiss 
+  the Popup without deleting the Recipient. If you really wish to delete the Recipient,
+  removing them from the Cohort and preventing Instant Census from sending them additional
+  communications, click the red **Delete User** Button in the bottom right of the Popup.
+* The second column, labeled Phone Number, displays a Recipient's Phone Number. This 
+  number is always formatted displaying country code, and without spaces, dashes,
+  or any other delimiter.
+* The third column, labeled Status, displays the Recipient's **Status**. This Status
+  indicates whether a Recipient is actively receiving Messages, and clicking it allows
+  you to change the Status of a Recipient.
+* The fourth column, labeled Timezone, indicates the Timezone to which the Recipient
+  is assigned. Whenever a Schedule is sent to a Recipient, it will be sent at the indicated
+  time in the appropriate Timezone for that Recipient. Clicking it launches a popup allowing
+  you to change the Timezone for this Recipient. By default, this attribute is set to
+  US Eastern Standard Time.
+  
+Any additional columns display **Recipient Attributes**, a key component to the interaction
+between Recipients and Surveys. Recipient Attributes are created by you, may be set to any
+alphanumeric value, and will appear in alphabetical order to the right of the Status
+column. Any of these Attributes, as well as the Recipient's Phone Number, may be
+freely edited at any time. Simply click on the text in the appropriate cell of the
+table to begin editing the information. Once you are done, hit enter or click anywhere
+outside the cell. Once you see the small, green **Saved** message in the lower left
+of your screen, the changes have been saved. If there were any problems saving your
+changes, a small red **Error** message will appear in the same position.
+
+In order to facilitate accessing the information on the Recipient table, there are search
+and sorting functions for the table. 
+
+* Any text entered in the Search bar above the right hand side of the Recipient Table 
+  will hide any entries on the table that do not contain the entered text. This 
+  can include numbers, and every column is checked for matching text. 
+* Each column in the table can be sorted. Clicking the Up/Down arrow icons on the
+  right side of each column in the header will sort the table by the contents of
+  that column. The columns are sorted either numerically or alphabetically, depending
+  on the contents of the cells in the column, and clicking the arrow again will 
+  alternate between ascending and descending sorting.
+  
+### 3.3.0 Adding Recipients
+
+By default, there are no Recipients attached to any particular Cohort. There are two
+methods for entering Recipients. To access either, you must hover over the **Actions**
+Dropdown directly below the Instant Census logo in the **Navigation Bar**. This
+will display a menu of options.
+
+* To add a single Recipient, click the **Add Recipient** Button. This will launch a Popup
+  prompting you to enter the new Recipient's Phone Number. Clicking the **X** in the top
+  right of the Popup or the **Cancel** Button in the bottom right will dismiss the
+  Popup without creating a new Recipient. Once you have entered the Phone Number, clicking
+  **Add Recipient** in the bottom Right will create a Recipient with that Phone Number.
+* To add multiple Recipients, click the **Upload Recipient Spreadsheet** Button. This will
+  allow you to upload a spreadsheet containing multiple Recipients from your computer.
+  Clicking cancel or X on the Popup displayed will dismiss it without creating new
+  Recipients. Once you have selected the spreadsheet you want to upload, clicking 'Open'
+  will begin the upload.
+  
+Because Recipients are identified by Phone Number, no two Recipients may have the same Phone
+Number. If you attempt to create a new Recipient with the same Phone Number as an existing
+Recipient, or if you attempt to create multiple new Recipients with the same Phone Numbers,
+you will encounter an error and the Recipient will not be created. At this time, only
+US Phone Numbers are supported by Instant Census. You must include the area code
+of the Phone Number when you create it.
+
+Spreadsheets may be uploaded in two modes: **Safe** and **Unrestricted**. In Safe
+Upload, the spreadsheet cannot overwrite the information of existing Recipients.
+I.e., if a Recipient is already on the Cohort, and their Phone Number appears in
+the spreadsheet you are uploading, then that row of the spreadsheet will be ignored
+and no changes will be made to the existing Recipient.
+
+In Unrestricted Upload, Recipients already on the Cohort may have their information
+edited based on the information appearing in the spreadsheet. While this can allow
+you to update information on Recipients en masse, it can be dangerous. In particular,
+empty cells in an uploaded spreadsheet will reset Attributes to their **Default Value**; 
+as a result, any Attributes you do not wish to alter must
+have their current, correct value filled out in any spreadsheet being uploaded Unrestricted.
+
+When uploading multiple Recipients as a spreadsheet, there are a few other important
+things to keep in mind.
+
+* You may only upload .csv, .xls, and .xlsx files. These are the only filetypes
+  supported by Instant Census for Recipient upload. Any other file types will result
+  in an error.
+  
+<table style="width:50%; float:right; margin-left: 15px; margin-bottom: 10px;" border="1">
+    <caption style="text-align:center;">Example Format for a Recipient Upload Spreadsheet</caption>
+    <tr>
+        <th>Phone Number</th>
+        <th>Attribute 1</th>
+        <th>Attribute 2</th>
+        <th>Attribute 3</th>
+    </tr>
+    <tr>
+        <td>555-555-5555</td>
+        <td>6</td>
+        <td></td>
+        <td>tuna</td>
+    </tr>
+    <tr>
+        <td>555-555-5556</td>
+        <td>8</td>
+        <td>no</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>5555555557</td>
+        <td></td>
+        <td>yes</td>
+        <td>cod</td>
+    </tr>
+    <tr>
+        <td>555 555 5558</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>(555) 555-5559</td>
+        <td>5</td>
+        <td>no</td>
+        <td>haddock</td>
+    </tr>
+</table>
+
+* The first row in the file must be a header, and the first item must be a 'Phone
+  Number' column. This may by one or two words, and capitalization does not matter,
+  but this must be the first column heading or the upload will not work.
+* As a corollary of the above, the Phone Number of each Recipient must be in the first
+  column. The content of the first column will be interpreted as the Recipient's Phone
+  Number.
+* If you wish to include timezone designations in your spreadsheet, the column must
+  be titled "timezone". Any variation on this will not work correctly.
+* You may, optionally, include additional **Recipient Attributes** in the spreadsheet.
+  You may include some or all of the existing Recipient Attributes, and they need not
+  be in order, but you can only include existing Custom Attributes. If you include
+  any Recipient Attribute Columns, their contents will be taken as the Recipient Attribute
+  value for that Recipient. Any cells left blank in such a column will be set to the
+  Default Value of that Attribute.
+* Depending on the speed of your internet connection and the size of the Recipient spreadsheet 
+  you are trying to upload, it could take some time to complete the uploading process.
+
+### 3.4.0 Editing Recipients
+
+Editing an existing Recipient is largely a matter of editing the appropriate cell in
+the Recipient Table.  
+
+In order to change a Recipient's Status, simply click on the cell in the Status column.
+If the Recipient is **Active** this will change them to **Paused**. If the Recipient is Paused
+this will set them to Active. **Pending**, **Disabled**, and **Inactive** Recipients cannot be changed 
+by you. In order to set a Recipient to Disabled, that Recipient must text in 'Stop', and Recipients
+only become Inactive when they fail to respond to a certain number of **Questions**
+in a row. In order to reactivate a Disabled or Inactive Recipient that Recipient must
+send a message to Instant Census. Recipients by default start Pending, and must text
+in confirming their desire to join the **Cohort** to be set to Active. By default
+Recipients cannot by default add themselves to your deployment. To access this
+functionality, please contact [support@instantcensus.com](mailto:support@instantcensus.com).
+
+In order to change a Recipient's Timezone, click on the cell in the Timezone column. This
+will launch a Popup, allowing you to select a new Timezone for that Recipient. Clicking
+on the Dropdown in the middle of the Popup will allow you to select a new Timezone.
+Once you have selected the Timezone you want, click **Change Recipient Timezone** to make
+the change. If you decide against altering a Recipient's timezone, simply click the **X**
+in the top right, or the **Cancel** Button in the bottom right. Bear in mind that
+changing a Recipient's Timezone when they are Active and part of an Active cohort may
+have unexpected and undesirable effects on system behavior. Though you can set a
+Recipient to any Timezone, Instant Census is only designed and authorized for use within
+the United States of America.
+
+If you click on any other cell, except the first, you will be able to freely edit
+it's text value. Once you have made the edit, clicking away from the cell in any 
+way will save the changes you have made. A small, green **Saved** message will appear
+in the lower left corner of the page to confirm your change has been saved. If you
+instead see a red **Error** message, something has gone wrong and your change has
+not been saved.
+
+When editing a Recipient's Phone Number, remember that no two Recipients can have the same
+Phone Number. If you attempt to change a Recipient's Phone Number to another Number
+already in use, an error will occur and the change will not be made.
+
+Furthermore, **Recipient Attributes** may not have blank values. If you attempt to change
+a Recipient Attribute to be blank, it will automatically be filled with the **Default
+Value** for that Attribute. If you would like to indicate that a Recipient does not have
+a certain Attribute, use "None", "N/A", or something similar instead.
+
+Due to the nature of the system, if you make multiple changes to a particular field
+in succession without waiting for confirmation that the change has saved, there
+is no guarantee that the last change you made will be the change applied. Therefore,
+be careful when making multiple rapid edits to a particular field. If a change has
+been saved successfully, a small green "Success" box will appear in the bottom left
+of the page. This indicates that any future changes you make will be applied *after*
+that change.
+
+### 3.5.0 Status
+
+In addition to having a mandatory Phone Number, each Recipient has a **Status**. This 
+Status indicates whether or not a Recipient is actively receiving Messages from Instant 
+Census, and is shown in the third column of the Recipients table. There are four possible 
+Recipient statuses.
+
+* **Pending** is the default Recipient Status for Recipients who text in to a **Cohort**.
+  When a Recipient messages in to a Cohort they are not already on, they will created
+  in the system as Pending, and sent a message asking them to confirm their desire
+  to use the system. When they confirm that they wish to join the Cohort, their Status
+  is automatically set to **Active**. By default Recipients cannot add themselves
+  to Cohorts. If you wish Recipients to be able to text-in to your Cohorts, contact
+  [support@instantcensus.com](mailto:support@instantcensus.com).
+* Active is the default Status for Recipients you add to the system. An Active 
+  Recipient is receiving Messages from Instant Census normally.
+* **Paused** indicates that the Recipient is no longer receiving Messages from Instant
+  Census. Recipients are set to Paused manually by you on this page. Recipients cannot reactivate
+  themselves via text message and can only be reactivated by an administrator.
+* **Inactive** is much like Paused in that it indicates a Recipient is no longer receiving
+  Messages from Instant Census. Unlike Paused, a Recipient becomes Inactive when they fail
+  to respond to a number of Questions in a row equal to the Cohort's **Inactive 
+  Limit** and can reactivate themselves by texting back in.
+* **Disabled** is much like Paused in that it indicates a Recipient is no longer receiving
+  Messages from Instant Census. Unlike Paused, Recipients make themselves Disabled by
+  texting Instant Census the message "Stop".
+  
+You may change a Recipient's Status by clicking their current Status in the third column
+of the table. If a Recipient is Active, this will change them to Paused, and if they
+are Paused, it will set them to Active. Note that you cannot change the Status of 
+a Pending, Disabled, or Inactive Recipient, nor can you set a Recipient to Pending, Disabled, or Inactive. Recipients 
+*must* disable themselves by texting "Stop", and Recipients may only become Inactive
+by failing to respond to a number of Questions in a row equal to the Inactive Limit.
+Once a Recipient is Disabled or Inactive, you cannot reactivate them. They must reactivate themselves 
+by texting in to the system, which will change their Status from either Disabled or Inactive
+to Active. A Paused Recipient cannot reactivate them by texting back in. Pending
+Recipients are set to Active as soon as they confirm that they wish to participate. Beyond this, 
+you may change a Recipient's Status as many times and as frequently as you desire. However, 
+when a Recipient's Status is changed, the Recipient is sent a Message informing them of that 
+Status change.
+
+### 3.6.0 Recipient Attributes & Recipients
+
+**Recipient Attributes** are the primary way by which Surveys can be tailored to a particular
+**Recipient**. Every Recipient in a particular **Cohort** has the same set of Recipient Attributes,
+but each Recipient may have different value for that Attribute. Furthermore, each Recipient
+Attribute has a **Default Value** set at time of creation which serves as the Attribute
+value for any Recipient on the Cohort who has not had the Attribute explicitly set. These
+values can then be checked, and set, by Surveys to guide the course of communication.
+
+In order to create a Recipient Attribute from the **Recipient Management** Page, hover over
+the Dropdown labeled **Actions**, directly below the Instant Census logo in the
+**Navigation Bar**. Then, in the menu that appears, click on the **Add Recipient Attribute**
+Button. This will launch a Popup using which you can create the Recipient Attribute.
+If you decide against creating a new Recipient Attribute, simply click the **X** in the top
+right of the Popup, or the **Cancel** Button in the bottom left.
+
+* In the Name field put the Name of the Attribute. This is the label under which the
+  Attribute will be listed in the Recipient Table. Each Recipient Attribute must have a unique
+  name, so make sure this value is not shared by any existing Attributes.
+* In the Default Value field, put the value you want the attribute to have by default.
+  Any Recipients already in the system when you create this Recipient Attribute will automatically
+  have the Default Value as their value for this Attribute. Any Recipients created subsequently
+  will automatically have this assigned as their value for this Attribute. You must
+  give a Default Value for each Attribute.
+  
+Once you are satisfied with the Name and Default Value of the Recipient Attribute, clicking
+**Add Recipient Attribute** at the bottom right of the Popup will create an attribute
+with that name, and assign the Default Value to all existing Recipients. If you wish
+to change the Default Value for an attribute, click the pencil next to the Attribute's
+name. This which launch a popup allowing you to edit the Default Value for that Attribute.
+
+If you want to change a particular Recipient's Attribute, you may do so from the Recipient
+Management Page by clicking the cell with the value in it. This will allow you to 
+edit that value. As soon as you click away from the cell, the value of the Attribute
+for that Recipient will be changed to whatever you have entered. If you try to change
+a Recipient's attribute to have no value, it will automatically be replaced with the
+Attribute's Default Value.
+
+You may also create/edit Attributes by uploading a spreadsheet of Recipients. If
+you include an Attribute that does not yet exist in your spreadsheet, an Attribute
+with the name will be created. An Attribute created in this way has a Default Value
+of **N/A**. Recipients created from this upload will start with their Attribute set
+to whatever value you give them. Blank Attributes for a particular Recipient will
+be set to the Attribute's Default Value. If you upload a spreadsheet in **Unrestricted**
+mode, you can also effect the Attributes of existing Recipients in this way. Such existing
+Recipients will still have Attributes for which they have a blank cell set to the
+Default Value, so if you wish to leave an Attribute of an existing Recipient unchanged
+you must still enter the correct information into the spreadsheet.
+
+### 3.7.0 Download Data
+
+In addition to the above features, it is possible to download data from
+the **Recipient Management** page. To do so, hover over the **Actions** Dropdown on the
+top left of the page, directly below the Instant Census logo in the **Navigation
+Bar**. In the menu that appears, click on **Download Recipients Data**. This will start
+the Download of Recipient data.
+
+### 3.8.0 Timezone Names
+
+These are the currently supported timezone names as set by the IANA
+([Internet Assigned Numbers Authority](http://www.iana.org/)) that are available for
+configuring recipient timezones:
+{% for timezone in TIMEZONE_LIST %}
+* {{ timezone }}
+{% endfor %}
+
+## 4.0.0 Message Sender
+
+The **Message Sender** Page provides a platform to interact directly with individual **Recipients**.
+To access a Recipient's Message Sender, click on the Button for that Recipient in the SMS
+column of the Recipient Table. This will take you directly to that Recipient's Message Sender.
+
+### 4.1.0 Main Attributes
+
+The **Main Attributes** Box contains some of the primary information about that
+Recipient.
+
+* **Recipient Phone** indicates the Phone Number of that Recipient.
+* The **Cohort** indicated is the Cohort to which the Recipient belongs.
+* The Cohort Status indicates whether the Cohort to which the Recipeint belongs
+  is **Active**, **Paused**, **Pending**, or **Completed**. This, along with the
+  Recipeint's Status, lets you know whether or not this person is actively receiving
+  communications from Instant Census.
+* **System Number** indicates the Phone Number from which Instant Census messages
+  the Recipient. Multiple Recipients may have the same System Number. This number is assigned
+  at Recipient creation and cannot be changed.
+* **Timezone** indicates the Timezone to which the Recipient is set. This determines
+  their local time, and thus controls when they receive **Schedules** set for a 
+  particular hour.
+* **Currently in active survey?** indicates whether or not the Recipient is in the middle
+  of responding to a Survey. If this item is "yes", the Recipient is currently receiving
+  and responding to **Questions** sent out by Instant Census. If this item is "no",
+  the Recipient is not in the process of responding to a Survey.
+* **Unhandled Messages** indicates whether or not the Recipient has sent in Messages
+  your deployment has flagged as **Needs Review**. For more information on what
+  Messages your deployment is flagging, contact [support@instantcensus.com](mailto:support@instantcensus.com).
+  You can check a Recipient's Unhandled Messages both in the **Message History** Box
+  on the right, and the **Inbox** Page accessible from the **Navigation Bar**.
+  
+Note that you may edit the Recipient Phone Number from here. Simply click the Recipient's
+current phone number and begin editing. Once you have made the edit, clicking away from the number in any 
+way will save the changes you have made. A small, green **Saved** message will appear
+in the lower left corner of the page to confirm your change has been saved. If you
+instead see a red **Error** message, something has gone wrong and your change has
+not been saved.
+
+When editing a Recipient's Phone Number, remember that no two Recipients can have the same
+Phone Number. If you attempt to change a Recipient's Phone Number to another Number
+already in use, an error will occur and the change will not be made.
+
+Due to the nature of the system, if you make multiple changes to a particular field
+in succession without waiting for confirmation that the change has saved, there
+is no guarantee that the last change you made will be the change applied. Therefore,
+be careful when making multiple rapid edits to a particular field. If a change has
+been saved successfully, a small green "Success" box will appear in the bottom left
+of the page. This indicates that any future changes you make will be applied *after*
+that change.
+  
+### 4.2.0 Other Attributes
+
+The **Other Attributes** Box includes other, less salient information. Much of this
+Box is repeated from the Recipient Table.
+
+* **Recipient ID** is the internal ID Instant Census uses to keep track of a Recipient. This is
+  an immutable and completely unique identification that the system uses to keep
+  track of the Recipient independent of any other factor.
+* **Create Time** indicates the date and time at which a Recipient was added to the Cohort.
+* **Status** is the Status of the Recipient. This may be **Pending**, indicating
+  Instant Census is waiting for the Recipient to confirm they wish to participate;
+  **Active**, indicating a Recipient
+  is receiving Messages normally; **Paused**, indicating the Recipient has been paused
+  by you; **Inactive**, indicating the Recipient was automatically paused because they
+  failed to answer enough **Questions** in a row; or **Disabled**, indicating that 
+  a Recipient has requested not to receive any further communication from Instant Census.
+* Any further items are **Recipient Attributes**, and the indicated value is the value
+  that Recipient has for that Attribute.
+
+You can change the Recipient's Status by clicking on their current status.
+If the Recipient is **Active** this will change them to **Paused**. If the Recipient is Paused
+this will set them to Active. **Pending**, **Disabled**, and **Inactive** Recipients cannot be changed 
+by you. In order to set a Recipient to Disabled, that Recipient must text in 'Stop', and Recipients
+only become Inactive when they fail to respond to a certain number of **Questions**
+in a row. In order to reactivate a Disabled or Inactive Recipient that Recipient must
+send a message to Instant Census. Recipients by default start Pending, and must text
+in confirming their desire to join the **Cohort** to be set to Active. By default
+Recipients cannot by default add themselves to your deployment. To access this
+functionality, please contact [support@instantcensus.com](mailto:support@instantcensus.com).
+
+You may also freely edit any of the Recipient's Attributes from here. Simply click the Attribute's
+current value and begin editing. Once you have made the edit, clicking away from the it in any 
+way will save the changes you have made. A small, green **Saved** message will appear
+in the lower left corner of the page to confirm your change has been saved. If you
+instead see a red **Error** message, something has gone wrong and your change has
+not been saved.
+
+Furthermore, **Recipient Attributes** may not have blank values. If you attempt to change
+a Recipient Attribute to be blank, it will automatically be filled with the **Default
+Value** for that Attribute. If you would like to indicate that a Recipient does not have
+a certain Attribute, use "None", "N/A", or something similar instead.
+  
+### 4.3.0 Message History
+
+The **Message History** Box provides a comprehensive history of the Messages sent
+and received by the Recipient. If the Recipient has any Unhandled Messages, that is, Messages
+Instant Census either couldn't understand or wasn't expecting, they are highlighted
+here.
+
+In addition to providing a complete conversation history, the Message History Box
+can also be used to manually communicate with an individual Recipient. Simply enter text
+in the Text Field directly below the Message History, and when you are satisfied
+click the green **Send** Button to the right. This will send the Message in the
+Text Field to the Recipient. You may only send such Messages to Active, Paused, or Inactive Recipients.
+Disabled Recipients may not receive *any* further communications.
+
+### 4.4.0 Other Features
+
+There are three other features you can utilize when on the **Message Sender** Page.
+To access them, hover over the **Actions** Dropdown in the top left of the page,
+directly beneath the Instant Census logo in the **Navigation Bar**. On the menu
+that pops up, simply click the Action you desire to use it.
+
+* **Mark Recipient as Handled** will remove the **Recipient** from the list of Recipients needing
+  review on the **Inbox** Page.
+* **Next Unhandled Message** will focus the Message History on the next unhandled
+  Message for this Recipient. This can allow you to quickly check through the Messages
+  sent in by the Recipient which Instant Census didn't know how to handle, and allow
+  you to evaluate what (if any) action you wish to take based on them.
+* **Download Message History** will automatically download a CSV file containing
+  a complete record of the communications between the Recipient and Instant Census.
+
+## 5.0.0 Survey Builder
+
+The **Survey Builder** Page provides the tools to create the Surveys that are to
+be sent to **Recipients** on a particular **Cohort**. To access the Survey Builder Page,
+click on the **Survey Builder** Button on the Cohorts Page, located in the middle
+of the left hand side of the Cohort's Button Panel, for the desired Cohort. If you
+are already within a Cohort, you may access the Survey Builder by clicking the Survey
+Builder tab in the **Navigation Bar**.
+
+### 5.1.0 Schedules
+
+**Schedules** are the starting point of any Survey. A Schedule indicates the time
+or times at which its **Questions** and **Messages** are sent out to Recipients. It indicates
+certain kinds of **Resend** behavior for its Questions, and helps organize things
+into manageable chunks. Note that if multiple Schedules are set to occur at the 
+same time, they will be sent to Recipients one at a time in essentially random order.
+Furthermore, later Schedules *will* interrupt earlier, non-completed Schedules.
+If a later Schedule has interrupted an earlier Schedule, the most recent outstanding
+Question from the previous Schedule will automatically be recent upon the conclusion
+of the interrupting Schedule.
+
+#### 5.1.1 Schedule Types
+
+There are three different Types of Schedule. These allow you to control the timing
+with which your Messages are sent out. The different Schedule Types can be used
+to handle different uses of Surveys, and allow you to ask Recipients Questions at exactly
+the times you want.
+
+* **Recurring** Schedules occur on at least a weekly basis. You specify the day
+  or days of the week on which you want the Schedule to be sent out, specify the time
+  and then every week on those days at that time your Recipients will receive their Messages.
+* **One-Time** Schedules happen exactly once, and then never again. You specify
+  the date and time for the Schedule to occur, and then it sends on that day, at
+  that time.
+* **On Recipient Creation** Schedules are sent to Recipients the first time they become eligible
+  to receive Messages. These Schedules follow the **Cohort's Welcome Message**, and
+  are triggered by the same circumstances. Unlike other Schedule types, you do not
+  set a time for these Schedules to occur; they will occur as soon as they can,
+  no matter what time it is. Like One-Time Schedules, On Recipient Creation Schedules
+  do not repeat.
+  
+#### 5.1.2 Adding Schedules
+
+In order to add a new Schedule, hover over the **Actions** Dropdown in the upper
+left of the page, directly below the Instant Census logo in the **Navigation Bar**.
+Then, in the menu that appears, click the **Add Schedule** Button. This will launch
+a Popup using which you can configure the options for your new Schedule. If you
+decide against creating a new Schedule, you can click the **X** in the top right of the
+Popup, or the **Cancel** Button in the bottom right.
+
+This Popup has three tabs, corresponding to the three Types of Schedules. Selecting
+the tab corresponding to the Type of Schedule you wish to create will display the
+options you need to configure in order to create the Schedule.
+
+For Recurring Schedules:
+
+* The **Send Survey On** Checkboxes allow you to select the day or days of the week
+  on which you want the Schedule to be sent. You must select at least one day, and
+  may select as many as you want. Simply check the corresponding box to select a
+  day. You cannot set this to be a day that has already happened. The earliest day
+  you can configure such a Schedule to go out is the current date at time of creation.
+* The **Send Questions At** Dropdown allows you to select the time at which you want
+  the Schedule to be sent. This may be any time of day, and will be sent to each
+  Recipient at that time in their Timezone. While you can send
+  Recipients Messages at any time, day or night, bear in mind that your Recipients might not
+  want to be disturbed at certain times.
+  
+For One-Time Schedules:
+
+* The **Send Survey On** field allows you to select the specific day on which you
+  wish to send the Survey. This day cannot have already passed; you must select the
+  current day or any subsequent, but may not set it for the past.
+* The **Send Questions At** Dropdown allows you to select the time at which you want
+  the Schedule to be sent. This may be any time of dayand will be sent to each
+  Recipient at that time in their Timezone. While you can send
+  Recipients Messages at any time, day or night, bear in mind that your Recipients might not
+  want to be disturbed at certain times.
+  
+On Recipient Creation Schedules do not require the configuration of any specific options.
+All Schedules, however, including On Recipient Create, have a set of **Resend** attributes
+that must be configured.
+
+* The **Resend questions if Recipients text back invalid answer?** Checkbox allows you
+  change whether or not improper responses by the Recipient cause the system to prompt
+  them to respond correctly. While this will increase the number of Messages sent,
+  it can help get you exactly the information you want.
+* The **Resend At** Dropdown allows you to select the time at which Surveys will
+  be resent. Like the **Send Questions At** field, this value takes into account
+  the Timezone of each Recipient. When setting this attribute, you should consider carefully
+  the times at which your Recipients are unlikely to want to receive communications.
+* The **Resend How Many Times?** field allows you to indicate the number of times
+  you wish the Schedule to be resent. If you do not want this Schedule to be resent
+  at all, simply set this value to 0.
+
+These last two variables set a Resend which will be sent in the event that a Recipient
+fails to respond to a Question on that Schedule. The next time the Resend At hour
+occurs, if a Recipient has not answered a Question on this Schedule, they will be
+resent their most recent Question. This will happen a number of times equal to the
+Resend How Many Times? Value. Note that if the Resend At time is after the time 
+the Schedule is normally sent out, the Recipient will receive the resend on the same
+day as the regular Schedule.
+  
+Once you are satisfied with the configuration of your Schedule, click the **Add
+Schedule** Button in the bottom right of the Popup. This will create a new Schedule
+with the indicated attributes. Bear in mind that you can edit a Schedule any time
+you want.
+
+#### 5.1.3 Editing Schedules
+
+You may edit a Schedule at any time. To do so, simply click on the Schedule. This
+will launch a Popup, pre-populated with the Schedule's current attributes, that
+you can use to change those attributes. If you decide against editing the Schedule,
+either click the **X** at the top right of the Popup, or the **Cancel** Button at the
+bottom right.
+
+The Popup has three tabs, corresponding to the three Types of Schedule. Using these
+tabs, you can change the Type of the Schedule to whichever you desire. However, if
+you convert any Schedule to an **On Recipient Create** Schedule, it will not send to
+existing, on-boarded **Recipients**. It will only send to new Recipients created *after* the
+editing of this Schedule.
+
+Clicking any of the tabs will bring up the inputs necessary to change the attributes
+of a Schedule of that Type.
+
+For Recurring Schedules:
+
+* The **Send Survey On** Checkboxes allow you to select the day or days of the week
+  on which you want the Schedule to be sent. You must select at least one day, and
+  may select as many as you want. Simply check the corresponding box to select a
+  day.
+* The **Send Questions At** Dropdown allows you to select the time at which you want
+  the Schedule to be sent. This may be any time of day, and will be sent to each
+  Recipient at that time in their Timezone. While you can send
+  Recipients Messages at any time, day or night, bear in mind that your Recipients might not
+  want to be disturbed at certain times.
+  
+For One-Time Schedules:
+
+* The **Send Survey On** field allows you to select the specific day on which you
+  wish to send the Survey. This day cannot have already passed; you must select the
+  current day or any subsequent, but may not set it for the past.
+* The **Send Questions At** Dropdown allows you to select the time at which you want
+  the Schedule to be sent. This may be any time of day, and will be sent to each
+  Recipient at that time in their Timezone.While you can send
+  Recipients Messages at any time, day or night, bear in mind that your Recipients might not
+  want to be disturbed at certain times.
+  
+On Recipient Creation Schedules do not have any specific options you may configure. All
+of these Schedule Types, however, including On Recipient Creation Schedules, have a set
+of **Resend** attributes that you may change.
+
+* The **Resend questions if Recipients text back invalid answer?** Checkbox allows you
+  change whether or not improper responses by the Recipient cause the system to prompt
+  them to respond correctly. While this will increase the number of Messages sent,
+  it can help get you exactly the information you want.
+* The **Resend At** Dropdown allows you to select the time at which Surveys will
+  be resent. Like the **Send Questions At** field, this value will take into consideration
+  each Recipient's Timezone. However, you should still think carefully about what time
+  your Recipients are likely to be receptive to communication.
+* The **Resend How Many Times?** field allows you to indicate the number of times
+  you wish the Schedule to be resent. If you do not want this Schedule to be resent
+  at all, simply set this value to 0.
+
+These last two variables set a Resend which will be sent in the event that a Recipient
+fails to respond to a Question on that Schedule. The next time the Resend At hour
+occurs, if a Recipient has not answered a Question on this Schedule, they will be
+resent their most recent Question. This will happen a number of times equal to the
+Resend How Many Times? Value. Note that if the Resend At time is after the time 
+the Schedule is normally sent out, the Recipient will receive the resend on the same
+day as the regular Schedule.
+
+Once you are satisfied with the configuration of your Schedule, click the **Edit
+Schedule** Button in the bottom right of the Popup. This alters the Schedule to have
+the attributes you set. You may alter a Schedule as many times as you want. 
+
+It is important to remember that if you edit a Schedule while a Recipient is in the middle
+of responding to that Schedule, this can lead to bizarre behaviors. This is not just
+limited to changing send times (although this can lead to significant trouble) but
+also adding/removing Questions and branches in logic. In general, you should try
+to avoid editing Schedules that could possibly be in progress. If you edit the send
+date and time of a One-Time Schedule that has already been sent so that it is in
+the future, that Schedule will be sent again on the new date.
+
+#### 5.1.4 Resends
+
+**Resends** are repetitions of Messages that have already been sent. Under certain
+circumstances, configurable on the **Schedule** level, the same Message may be sent
+multiple times. There are two reasons that this might happen.
+
+* If a Recipient responds inappropriately to a **Question**, they may receive a resend
+  prompting them to respond correctly. So, for instance, if you asked a Recipient to
+  rate something between 1 and 5, and they responded "7", they could receive a resend
+  restating the Question and reiterating that they should respond with a number
+  between 1 and 5.
+* If a Recipient fails to respond at all, they may be sent a Resend simply restating
+  the Question to prompt them to resume answering. This can serve as a reminder to
+  a Recipient that they have a Survey which they simply forgot about or failed to notice
+  the first time.
+  
+The former kind of Resend can be switched on and off by checking or unchecking (respectively)
+the **Resend questions if Recipients text back invalid answer?** Checkbox in the Schedule
+Creation or Schedule Editing Popup. It cannot be customized in any other way.
+
+The latter kind of Resend requires slightly more complex configuration, and are also
+set up in the Schedule Creation or Schedule Editing Popup. Such Resends are scheduled
+to occur at a specific time in the **Resend At** field of the Popup. This is the
+time at which Instant Census will check to see if Recipients
+have uncompleted Schedules. Furthermore, the number of times you wish this to happen
+must be specified in the **Resend How Many Times?** field. This is the number of
+times Instant Census will Resend that Schedule before allowing it to go unanswered.
+Thus, if you have a Resend set to happen at 5pm three times, the next three times
+it is 5pm EST the Recipient will be resent their currently active Question for that Schedule.
+If a Recipient has completed a Schedule, and has no outstanding Questions from it, then
+Resends will not happen.
+
+Independent of the foregoing, Questions will automatically be resent if an incomplete
+schedule is interrupted, and the interrupting Schedule is completed. If this happens,
+the most recent unanswered Question from the interrupted Schedule will be resent,
+allowing the Recipient to resume the interrupted Schedule. It is important to remember
+that this resend will occur *immediately* upon completion of the interrupting Schedule,
+causing the resent Question to occur within the context of a *different* Schedule.
+It is therefore important that you word everything so that these different occurences
+will not elicit improper responses from the Recipients.
+
+Resends have priority over ordinary Schedules. That is, if you have a Schedule that
+occurs every Tuesday at 6pm, and a Schedule from Monday that resends at 6pm, the
+Resend will occur before the new Schedule. If there are multiple Resends set to
+occur at the same time, their order will be random.
+
+Because Resends only send out the most recent unanswered Question to a Recipient, they
+have some ramifications for how Questions ought to be worded. In particular, if
+you wish to use Resend functionality, it is important to word Questions so that
+they make sense *without* the rest of their associated Schedule preceding them.
+If Questions are not written so that they make sense out of context from the rest
+of their Schedule, this will cause confusion and improper responses among your Recipients.
+
+#### 5.1.5 Items Dependent on Schedules
+
+The primary value of Schedules is providing a timeframe on which other, more active
+things can occur. These dependent Items must be attached, either directly or indirectly
+to a Schedule. To add an Item to a Schedule click the blue **+** Button to the right
+of the Schedule. This will launch a Popup from which you can add Items to the Schedule
+If you decide against adding an Item to a Schedule, click the **X** in the top right
+of the Popup, or the **Cancel** Button on the bottom right.
+
+You may add any of the other Item Types to the Schedule. Simply click on the tab
+at the top of the Popup corresponding to the type of Item you wish to create. This
+will automatically display the correct fields to configure an Item of that Type.
+Once you are satisfied with the Item, click the **Add New Item** Button at the bottom
+right of the Popup. This will create a new Item with the selected attributes. 
+
+Items added to a Schedule occur in order of appearance below the Schedule.
+Thus, Items higher up on the page occur before Items lower down. To change an Item's
+position, click the Up or Down arrow directly to the right of the Item. This will
+move the Item, as well as any Items that may be dependent upon that Item, either
+up or down. Thus, when a Schedule occurs, it will immediately perform whatever action
+is required by the first Item attached to it and continue on until there are no
+more Items. This direct progress through the Items has two noteworthy exceptions.
+
+* If you send multiple **Messages** in a row, or any Messages and a **Question**,
+  there is no guarantee that they will arrive in the desired order. While Instant
+  Census takes a number of measures to increase the liklihood that they will be
+  received correctly, the nature of SMS as a medium means it is never 100% certain
+  that such communications will appear to Recipients in the order they are sent out.
+* As soon as you send a Question, the Schedule pauses until the Recipient responds to
+  the Question. As soon as the Recipient has responded, the Schedule will continue on
+  as normal. 
+  
+If you wish to hide the Items attached to a Schedule, you can click the arrow to
+the left of the Schedule. This will hide all the Items dependent on the Schedule.
+Clicking the arrow again will reveal them once more.
+
+#### 5.1.6 Copying Schedules
+
+The <span class="glyphicon glyphicon-copy" aria-hidden="true"></span> (Copy Schedule)
+Button to the right of the Schedule allows you to transfer a Schedule from one Cohort
+to another. When you click this Button, it will launch a Popup asking you to indicate
+to which Cohort you would like to copy the Schedule. Once you have selected to Cohort 
+to which you would like to transfer the Schedule, click the **Copy Schedule** Button 
+in the lower right to make the transfer. If you decide against copying the Schedule, 
+click the **X** Button in the top right, the **Cancel** Button next to the Copy 
+Schedule Button, or simply click anywhere outside the Popup.
+
+Note that you can copy a Schedule to a Cohort in which it already exists. In such
+a case, you will create a second exact duplicate of your Schedule within the same
+Cohort. While this can have it's uses, be careful to make sure that you do not leave
+both these Schedules set to occur at the same time, or your Users will get the same
+exact survey twice in a row.
+
+In order to successfully copy a Schedule, you must ensure that any **Custom Attributes**
+used in that Schedule (in **Set Attributes**, **Conditionals**, **Question** text
+and **Message** text) exist in the Cohort to which you are moving the Schedule. If
+they do not, Instant Census will be unable to copy the Schedule. You will get an
+error, and need to add the appropriate Attributes to the new Cohort.
+
+#### 5.1.7 Testing Schedules
+
+By clicking on the <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> 
+(**Test Schedule**) button, you can send your Schedule out to a few Recipients outside
+the normal timing of the Schedule. This lets you, for example, beta test Schedules
+on particular users, or just send your Schedule to yourself to make sure the logic
+works as intended. 
+
+When you click this button, a Popup will launch allowing you to enter the Recipients
+you wish to test the Schedule on. Simply begin entering the Recipient's phone number
+in the box. Do not use any parentheses, hyphens, or spaces when entering the number.
+A list of Recipients currently on the Cohort will autofill based on what you have
+entered, allowing you to select the correct Recipient. Once you entered the Recipient,
+simply click enter or click away from the input. This will add the Recipient to
+the list of Test Recipients. Once you have thus indicated all the Recipients with
+whom you wish to test the Schedule, click the **Test Schedule** Button in the bottom
+right of the Popup to send out the selected Schedule to the indicated Recipients.
+Note that this will interrupt any Schedules they have currently ongoing, and will
+not stop them from also receiving the Schedule at the normal time.
+
+If you decide against sending out a test of the Schedule, you can click the **X**
+in the top right or the **Cancel** Button to the left of the Test Schedule Button
+to dismiss the Popup and continue on without sending the test. You can also click
+anywhere outside the Popup.
+
+### 5.2.0 Questions
+
+**Questions** are how you actively solicit information from **Recipients**. They form
+the backbone of Schedules, allowing you to automatically ask your Recipient for information.
+They can also form the basis for sub-groupings of Questions, **Messages**, and other
+Items, allowing you to ask people only the most important things based on their
+particular traits. 
+
+#### 5.2.1 Types
+
+There are four different **Types** of **Question**. Each allows you to ask a different
+kind of Question, and indicate a different set of Expected Responses from a **Recipient**.
+You can use these Expected Responses to customize each Recipient's experience based on
+the information they have already given you, eliminating the need to ask every Recipient
+every Question, even those that do not apply to them.
+
+* **Open-Ended** Questions are Questions that are too broad to be able to predict
+  how a Recipient will respond. While this means responses to this Question Type are
+  less useful than others, it can be a good way to ask broad or vague questions.
+  Anything a Recipient sends back as a response to an Open-Ended Question will be accepted
+  by the system, without further analysis or parsing.
+* **Yes/No** Questions are those which require a binary response of, as their name
+  implies, either "yes" or "no". Any response a Recipient sends back to such a Question
+  will be analyzed to see if it could be one or the other. If it could, then the
+  appropriate response is logged by the system. Any answer that cannot be so construed
+  is logged as an 'Unhandled Response', and the Recipient may be prompted to re-respond,
+  depending on the configuration of the **Schedule**.
+* **Multiple Choice** Questions expect one of a finite number of possible responses.
+  You must indicate how many options there are, and what those options are, when
+  you create such a Question. Recipient responses are then compared with the possible
+  choices, and if there is a match that is logged by the system. Otherwise, the
+  response is logged as an 'Unhandled Response', and the Recipient may be prompted to re-respond,
+  depending on the configuration of the Schedule.
+* **Numeric** Questions expect an answer that is a number within a particular range.
+  You must set the minimum and the maximum possible value for an answer when you
+  create a Question of this Type. Currently, negative numbers are not supported,
+  and 2,147,483,647 is the maximum possible value for such a number. Instant Census
+  will attempt to read any response by the Recipient as a number, and if successful log
+  that response. Otherwise, the   response is logged as an 'Unhandled Response', 
+  and the Recipient may be prompted to re-respond, depending on the configuration of 
+  the Schedule.
+
+#### 5.2.2 Adding Questions
+
+To add a Question to a **Schedule**, click the **+** to the right of the Item of which you 
+want the Question to be a Dependent Item, either the Schedule itself or a **Conditional**.
+This will launch a Popup allowing you to configure the necessary details of the
+Question. Make sure the Question Tab is the active Tab at the top of the Popup.
+If you decide against creating a new Question, simply click the **X** at the top right
+of the Popup, or the **Cancel** Button at the bottom right.
+
+* Every Question requires you to enter the text of the Question in the **Question
+  Text** field. This is text of the Message that will get sent to the **Recipient** when this
+  Question is asked. For the best Recipient experience, you should make sure that the
+  Text makes clear what kind of Question this is. The length of the Text of a Question
+  cannot exceed 160 characters.
+* The **Question Type** field allows you to select the **Type** of the Question.
+  When you make this selection, a new set of fields will appear allowing you fill
+  out the other necessary information for that Question Type.
+  
+Each Question Type requires different information in order to create a Question.
+When you set or change the Question Type Dropdown, the necessary fields will appear
+immediately below. **Open-Ended** and **Yes/No** Questions do not have any additional 
+required information. All that is required is the Text of the Question and identification
+of its Type.
+
+**Multiple Choice** Questions require three additional pieces of information.
+
+* The **Append Choices to SMS?** Checkbox allows you to automatically append a list
+  of the valid choices to the end of the Message. If this option is selected for
+  a Question, the text of this appendix will be displayed alongside the regular
+  Text of the Question. Bear in mind that if you do this, the length of the Message
+  may exceed 160 characters, and thus require more than one Message to send. If
+  multiple Messages are required, there is no guarantee they will be received by
+  the Recipient in the correct order.
+* The **Number of Choices** field lets you indicate how many choices you are setting
+  for this Question. This number must be at least 1, and cannot exceed 2,147,483,647.
+* The **Choices** fields must each contain the text of a particular Choice for the
+  Question. The Recipient's response will be compared to each of these Choices, and only
+  if there is an exact match (capitalization notwithstanding) will a Recipient's response
+  be considered correct. Each field *must* have answer text put in it. If you elect
+  to have the Choices automatically appended to the message, it is each of these 
+  values which will be put at the end of the Message.
+  
+**Numeric** Questions require two additional pieces of information.
+
+* The **Minimum** is the minimum possible number value of a valid Recipient response.
+  While this number may be zero, it cannot be negative.
+* The **Maximum** is the maximum possible number value of a valid Recipient response.
+  This number *must* be higher than the Minimum value.
+
+Thus, a valid Recipient response to a Numeric Question is any value between the Minimum
+and Maximum, inclusive. It is also worth noting that the maximum possible value
+for either field is 2,147,483,647.
+  
+
+#### 5.2.3 Editing Questions
+
+If you wish to edit the Text of a **Question**, you can simply click on the Question
+Text as displayed in the **Survey Builder**. This will let you edit the Message
+a **Recipient** will see when they reach that part of the **Schedule**. However, this *will not* change
+any other attributes of the Question, just the Text. A Question edited in this way
+will retain its Type, possible answers, and any other configurable attribute. Once
+you are done editing the Question Text, simply click away from the Text and it will
+automatically be saved. You cannot edit the Question's Text to be more than 160
+characters.
+
+You may edit a Question's Text in this way as many times as you want. However,
+due to the nature of the system, if you make multiple changes to the same Question
+in succession without waiting for confirmation that the change has saved, there
+is no guarantee that the last change you made will be the last change applied. Therefore,
+be careful when making multiple rapid edits to a particular Question. If a change has
+been saved successfully, a small green 'Success' box will appear in the bottom left
+of the page. This indicates that any future changes you make will be applied *after*
+that change.
+
+If you wish to edit any of the other attributes of a Question, click on the parenthetical
+listing of the Question's attributes located to the right of the Question Text.
+This will launch a Popup from which you can edit the various options for the Question.
+This Popup will automatically be populated with the current values for the Question.
+If you decide against editing the Item, simply click the **X** in the top right of the
+Popup, or the **Cancel** Button in the bottom right. This will discard your changes
+without saving them.
+
+* The **Text** field allows you to edit the Text of the Question as it will be sent
+  to the Recipient. This cannot exceed 160 characters.
+* The **Question Type** field allows you to change the **Type** of the Question.
+  When you make this selection, a new set of fields will appear allowing you fill
+  out the other necessary information for that Question Type.
+
+Each Question Type has different configurable attributes. When you change the Question 
+Type Dropdown, the fields allowing you to change these values will appear immediately 
+below. **Open-Ended** and **Yes/No** Questions do not have any additional configurable
+attributes. All that is used for these Questions are the Text and the Type.
+
+**Multiple Choice** Questions have three additional configurable attributes.
+
+* The **Append Choices to SMS?** Checkbox allows you to automatically append a list
+  of the valid choices to the end of the Message. If this option is selected for
+  a Question, the text of this appendix will be displayed alongside the regular
+  Text of the Question. Bear in mind that if you do this, the length of the Message
+  may exceed 160 characters, and thus require more than one Message to send. If
+  multiple Messages are required, there is no guarantee they will be received by
+  the Recipient in the correct order.
+* The **Number of Choices** field lets you indicate how many choices you are setting
+  for this Question. This number must be at least 1, and cannot exceed 2,147,483,647.
+* The **Choices** fields must each contain the text of a particular Choice for the
+  Question. The Recipient's response will be compared to each of these Choices, and only
+  if there is an exact match (capitalization notwithstanding) will a Recipient's response
+  be considered correct. Each field *must* have answer text put in it. If you elect
+  to have the Choices automatically appended to the message, it is each of these 
+  values which will be put at the end of the Message.
+  
+**Numeric** Questions have two additional configurable options.
+
+* The **Minimum** is the minimum possible number value of a valid Recipient response.
+  While this number may be zero, it cannot be negative.
+* The **Maximum** is the maximum possible number value of a valid Recipient response.
+  This number *must* be higher than the Minimum value.
+
+Thus, a valid Recipient response to a Numeric Question is any value between the Minimum
+and Maximum, inclusive. It is also worth noting that the maximum possible value
+for either field is 2,147,483,647.
+
+Once you are satisfied with the edits you have made to the Question, click the 
+**Edit Item** Button in the bottom right of the Popup. Bear in mind that you can
+edit a Question as many times as you want.
+
+#### 5.2.4 Items Dependent on Questions
+
+Like a **Schedule**, Dependent Items may be attached to **Questions**. Unlike Schedules,
+however, which may have any Type of Item attached to them, Questions can only have
+**Conditional** or **Set Attribute** Items attached to them. This is because any
+Item attached to a Question must interact with the answer to that Question. This
+also means that Conditionals and Set Attributes attached to Questions behave slightly
+differently from their ordinary counterparts.
+
+To add an Item to a Question, click the purple **+** to the right of the Question to
+which you wish to add the Item. This will launch a Popup using which you can setup
+the Item. If you decide against adding the Item, simply click the **X** in the top right
+of the Popup, or the **Cancel** Button in the bottom right.
+
+As with any Item addition, the first thing in the Popup is a tab that allows you
+to select the Type of Item you wish to add. Your only two options will be Conditional
+and Set Attribute. Once you have selected which you wish to add, the necessary fields
+to configure that Type of Item will appear. However, in each case your choices will
+be constrained.
+
+* If you are adding a Conditional, the first part must include the answer to the Question.
+  That is, Conditionals attached to Questions must be of the form "If {{ ANSWER_VALUE_DISPLAY }}
+  is __________________________________".
+* If you are adding a Set Attribute, the second part must include the answer to the
+  Question. That is, Set Attributes attached to Questions must be of the form "Set
+  __________________________________ to {{ ANSWER_VALUE_DISPLAY }}".
+
+In both cases, the answer is the particular answer given by each Recipient, and thus
+its actual value will vary from Recipient to Recipient. 
+
+Items dependent on a Question will occur in order from the Question. You can reorder
+these items by clicking the Up or Down arrow to the right of the Item. This will
+move the Item Up or Down in order respectively. You cannot put an Item dependent
+on a Question *above* the Question on which it depends. Furthermore, you cannot
+move such an Item from dependence on the Question to dependence on something else.
+
+### 5.3.0 Messages
+
+**Messages** are texts sent out to Recipients that do not anticipate a response from
+the Recipient. This differentiates them from **Questions**, which are meant to prompt
+a response from a Recipient. Messages can be used when you wish to communicate some information
+to Recipients, but do not want them to send information in return. For this reason, it
+is important to word Messages in such a way as to make clear to Recipients that they
+are not expected to respond. If a Recipient responds to a Message, their response will
+be classified as an "Unhandled Response".
+
+It is also important to think very carefully about usage and placement of Questions.
+In particular, if multiple Messages are sent in a row, or a Message is sent directly
+before a Question, there is no guarantee that the Recipient will receive these communications
+in the order they are sent out. This is a limitation of all SMS systems. Consequently,
+you should be aware that if you send multiple Messages in a row, they could be received
+in any order, and Messages meant to precede Questions may, in fact, follow them.
+This last behavior can be particularly troublesome, as it may make Recipients less likely
+to respond to the Question.
+
+#### 5.3.1 Adding Messages
+
+To add a **Message**, click the + Button to the right of the Item on which you want
+the Message to be dependent. This may be a **Schedule** or a **Conditional**. Once
+you have done so, a Popup will appear allowing you to add an Item. Click on the
+tab labeled **Message** at the top of the Popup. This will display a field in which
+you should enter the Text of the Message. This is the Text that will be sent to 
+each Recipient who receives the Message. A Message cannot be longer than 160 characters.
+Once you are satisfied with the Message's Text, click the **Add Item** Button on 
+the bottom right of the Popup. Bear in mind that you can edit a Message at any time. 
+If you ultimately decide against adding the Message, simply click the **X** at the top 
+right of the Popup, or the **Cancel** Button on the bottom right.
+
+#### 5.3.2 Editing Messages
+
+In order to edit a **Message**, simply click on the Text of the Message as displayed
+in the **Survey Builder**. This will allow you to directly edit the Text of the
+Message. You may save your changes by clicking away from the Text. You cannot edit
+a Message to be longer than 160 characters.
+
+You may edit a Message's Text in this way as many times as you want. However,
+due to the nature of the system, if you make multiple changes to the same Message
+in succession without waiting for confirmation that the change has saved, there
+is no guarantee that the last change you made will be the last change applied. Therefore,
+be careful when making multiple rapid edits to a particular Message. If a change has
+been saved successfully, a small green 'Success' box will appear in the bottom left
+of the page. This indicates that any future changes you make will be applied *after*
+that change.
+
+### 5.4.0 Conditionals
+
+**Conditional** is an item Type that allows you to tailor the behavior of a Survey
+to the particular details of a particular **Recipient**. They allow you to skip portions
+of a **Schedule** for Recipients to whom that portion doesn't apply, and funnel Recipients
+through a Schedule so you get the most important information out of each person 
+based on what you already know about them.
+
+Conditionals all take the form of "If __________________________________ is
+__________________________________". The first blank will generally be a **Recipient 
+Attribute**, while the second blank can be anything. This works slightly differently 
+if the Conditional is dependent on a **Question**. In that case, the first blank
+will always be "{{ ANSWER_VALUE_DISPLAY }}". Any Item that is then attached to the Conditional will
+only occur for a Recipient if the value of the first blank is the same as the value of 
+the second blank for that Recipient. If the first blank is "{{ ANSWER_VALUE_DISPLAY }}", it will check against
+the value of the response just sent in by the Recipient. Thus, you create a sub-portion 
+of the Schedule that will only happen for Recipients for whom the Conditional is true.
+
+#### 5.4.1 Adding Conditionals
+
+To add a **Conditional**, click the **+** Button to the right of the Item on which you 
+want the Conditional to be dependent. This may be a **Schedule**, **Question**, or 
+another Conditional. This will launch a Popup allowing you to configure the
+options to add an Item to that Item. If you decide against creating the Conditional,
+simply click the **X** at the top right of the Popup, or the **Cancel** Button at the
+bottom right.
+
+To add a Conditional with the Popup, you must first select the **Conditional** tab
+at the top of the Popup. This will automatically display the fields required to set
+up a new Conditional.
+
+If you are adding it to a Schedule or Conditional, there will be a Dropdown from
+which you must select the **Recipient Attribute** of which you wish to check the Recipient's
+Value. If you are adding it to a Question, this will automatically be filled with
+"{{ ANSWER_VALUE_DISPLAY }}", and the Conditional *must* check the value of the Recipient's answer to the
+preceding Question.
+
+Next, there is a blank text field in which you must put the value you wish to compare
+the first item against. You must enter this text *exactly* as you wish it to be
+compared, and if the Conditional is being added to a Question you should take care
+to ensure that this value is precisely the same as one of the valid responses to
+the preceding Question.
+
+#### 5.4.2 Editing Conditionals
+
+Editing a **Conditional** can be done directly from the **Survey Builder** page.
+
+* To change the attribute to be checked, simply click it on the Conditional. This
+  will open a Dropdown menu from which you can select any of the existing **Recipient
+  Attributes**. Once you select a new Attribute, the system will automatically save
+  your change. If the Conditional depends on a **Question**, however, this value
+  cannot be changed from "{{ ANSWER_VALUE_DISPLAY }}". Conditionals Dependent on Questions *must* check
+  against the value of a Recipient's answer to that Question.
+* To edit the value against which the attribute is checked, click that value on the
+  Conditional. This will allow you to directly edit the Text of the value. If you
+  are editing a Conditional attached to a Question, remember to make sure that this
+  value *precisely* matches one of the valid answers to the Question. If it does not,
+  the Conditional will always be treated as false.
+
+You may edit a Conditional as many times as you want, whenever you want. However,
+due to the nature of the system, if you make multiple changes to the same variable
+of the same Conditional in succession without waiting for confirmation that the 
+change has saved, there is no guarantee that the last change you made will be the 
+last change applied. Therefore, be careful when making multiple rapid edits to a 
+particular variable of a particular Conditional. If a change has been saved successfully, 
+a small green 'Success' box will appear in the bottom left of the page. This indicates 
+that any future changes you make will be applied *after* that change.
+
+#### 5.4.3 Items Dependent on Conditionals
+
+Much like **Schedules**, the prime use of **Conditionals** is as something to which
+other Items can be attached. In particular, since Items attached to a Conditional
+only occur if the Conditional is true, it allows you to automatically alter what
+a Recipient sees in their Survey depending on what you already know about that Recipient.
+
+To add an Item to a Conditional, click the orange + to the right of the Conditional.
+This will laucnh a Popup allowing you to configure the attributes of the new Item.
+If you decide against adding a new Item to the Conditional, click the **X** at the top
+right of the Popup or the **Cancel** Button on the bottom right.
+
+You may add any of the other Item Types to the Conditional. Simply click on the tab
+at the top of the Popup corresponding to the type of Item you wish to create. This
+will automatically display the correct fields to configure an Item of that Type.
+Once you are satisfied with the Item, click the **Add New Item** Button at the bottom
+right of the Popup. This will create a new Item with the selected attributes. 
+
+Items added to a Conditional occur roughly in order of appearance below the Conditional.
+Thus, Items higher up on the page occur before Items lower down. To change an Item's
+position, click the Up or Down arrow directly to the right of the Item. This will
+move the Item, as well as any Items that may be dependent upon that Item, either
+up or down. You cannot put an Item dependent on a Question *above* the Conditional 
+on which it depends. Furthermore, you cannot move such an Item from dependence on 
+the Conditional to dependence on something else.
+
+### 5.5.0 Set Attribute
+
+The **Set Attribute** Item Type allows you to automatically change the value of
+one of a Recipient's **Recipient Attributes** during a **Schedule**. By doing so, you can
+store information gleaned from one Schedule, and use it in either the same or a 
+later Schedule to hone the Recipient's experience.
+
+Set Attributes take the form of "Set __________________________________ to
+__________________________________". Typically, the first blank is filled with the
+Recipient Attribute of which you wish to set the value, and the second blank is filled
+with the new value you want it to have. If the Set Attribute is attached to a **Question**,
+however, then the second blank must be "{{ ANSWER_VALUE_DISPLAY }}", and will set the Attribute to have
+the value of the response the Recipient sent to the preceding Question.
+
+#### 5.5.1 Adding Set Attributes
+
+To add a **Set Attribute**, click the + Button to the right of the Item on which you 
+want the Set Attribute to be dependent. This may be a **Schedule**, **Question**, or 
+**Conditional**. This will launch a Popup allowing you to configure the options 
+to add an Item to that Item. If you decide against creating the Set Attribute, simply 
+click the **X** at the top right of the Popup, or the **Cancel** Button at the bottom 
+right.
+
+Once you have opened the Popup, click the **Set Attribute** tab to bring up the
+options you need to configure to create the new Set Attribute.
+
+* You must select one of the **Recipient Attributes** for this Cohort. This Attribute
+  is the Attribute that will be changed when this Set Attribute occurs. You must
+  select one of the existing Recipient Attributes from the Dropdown in the Popup.
+* You may enter any value to fill the second blank by typing it in the Text Field.
+  This is the *exact* value to which the Recipient Attribute will be set when this Set
+  Attribute occurs. If the Set Attribute is attached to a Question, you cannot edit
+  this field. Instead, it *must* be "{{ ANSWER_VALUE_DISPLAY }}", and will set the Recipient Attribute to
+  whatever answer the Recipient gave to the preceding Question.
+  
+Once you have configured the Set Attribute, click the **Add Item** Button on the
+bottom right of the Popup. Bear in mind that you can edit the Set Attribute at any
+time, and as many times as you want.  
+
+#### 5.5.2 Editing Set Attributes
+
+Editing a **Set Attribute** can be done directly from the **Survey Builder** page.
+
+* To change the Attribute to be set, simply click it on the Set Attribute. This
+  will open a Dropdown menu from which you can select any of the existing **Recipient
+  Attributes**. Once you select a new Attribute, the system will automatically save
+  your change.
+* To edit the value to which the Attribute is set, click that value on the Set
+  Attribute. This will allow you to directly edit the Text of the value. If you
+  are editing a Set Attribute attached to a **Question**, you cannot edit this value.
+  It will always be "{{ ANSWER_VALUE_DISPLAY }}", and will set the Attribute to the Recipient's response to
+  the Question.
+
+You may edit a Set Attribute as many times as you want, whenever you want. However,
+due to the nature of the system, if you make multiple changes to the same variable
+of the same Set Attribute in succession without waiting for confirmation that the 
+change has saved, there is no guarantee that the last change you made will be the 
+last change applied. Therefore, be careful when making multiple rapid edits to a 
+particular variable of a particular Set Attribute. If a change has been saved successfully, 
+a small green 'Success' box will appear in the bottom left of the page. This indicates 
+that any future changes you make will be applied *after* that change.
+
+### 5.6.0 Other Features
+
+In addition to the features outlined above, there are a few additional actions possible
+on the **Survey Builder** Page, allowing you to interact with Items and Surveys.
+
+#### 5.6.1 Deleting Items
+
+If you wish to remove an Item from your Survey entirely, click the pink **X** located
+to the right of the Item. This will launch a Popup asking you to confirm that you
+wish to delete the Item. This Popup also lists any other Items that will automatically
+be deleted as a result of the deletion of the selected Item. If you decide against
+deleting the Item, click the **X** in the top right of the Popup, or the **Cancel**
+Button in the bottom right.
+
+If you are sure you would like to delete the Item, click the **Delete** Button at
+the bottom right of the Popup. Bear in mind that, as the Popup will indicate, when
+you delete an Item, all the Items dependent on it will also be deleted automatically.
+This means, for instance, that if you wish to delete an entire **Schedule**, you
+need only click the **X** next to the Schedule itself, and every Item on that Schedule
+will automatically be deleted as well.
+
+#### 5.6.2 Moving Items
+
+Since Items attached to a Schedule will occur in vertical order, starting at the top
+and working down, you must arrange Items in the correct order for your Schedule to
+occur as intended. This can be achieved using the Up and Down Arrows located to
+the right of an Item.
+
+Clicking the Up Arrow will move the Item up the list, above whatever immediately
+precedes it, and thus put it earlier in the Schedule.
+
+Clicking the Down Arrow will move the Item down the list, below whatever immediately
+precedes it, and thus put it later in the Schedule.
+
+When using these Arrows, note that Items move in groups based on dependency. E.g.,
+if you move a **Question** with three **Conditionals** dependent on it, those Conditionals
+will travel with the Question and remain dependent on it. Likewise, moving an Item
+does not change the Item on which it depends.
+
+#### 5.6.3 Syntax Highlighting
+
+By default, the **Survey Builder** has Syntax Highlighting. That is, different types
+of Items and the different parts thereof are displayed in different colors to help
+you identify them at a glance and find the part with which you need to interact.
+In the event that you find this distracting, or dislike it for any other reason,
+you may turn this feature off. Hover over the **Actions** Dropdown in the top left
+of the Page, directly below the Instant Census logo in the **Navigation Bar**. From
+the menu that appears, select **Toggle Syntax Highlighting**. This will turn Syntax
+Highlighting off. If you later decide you would like to turn Syntax Highlighting
+back on, repeat the process.
+
+The scheme employed for the Syntax Highlighting is as follows:
+
+* **Schedules** are in blue, and at a larger font size than anything else
+* Items that result in Messages being sent to **Recipients** are indicated in purple.
+* Items that do not result in Messages being to Recipients are indicated with orange.
+* Fields and variables that are editable directly from the Survey Builder page are
+  in grey, and further have a grey underline.
+* Additional information about **Questions** is in green. This can also be clicked
+  to launch the full Question editing Popup.
+
+#### 5.6.4 Print Surveys
+
+If you wish to print a copy of your Survey logic for later use or dissemination,
+you may do so from the **Actions** menu. Hover over the Actions Dropdown in the
+top right of the Page, directly below the Instant Census logo in the **Navigation
+Bar**. From the menu that appears, select **Print Surveys**. This will launch a print
+menu from which you can print the Survey as you would any other document. The precise
+configuration and usage of this print menu will vary depending on the operating
+system and browser you are using; consult their documentation for more information
+about their use.
+
+#### 5.6.5 Preview Question/Message
+
+To the right of the Up/Down Arrows next to a **Question** or **Message** is the Preview Button.
+Clicking this will show you how the Question or Message will appear for each **Recipient**
+on your **Cohort** by filling in any **Recipient Attributes** in the Message text
+with the current appropriate value for that Recipient. This lets you double check
+that your Message will display correctly for Recipients, and that inserting a Recipient
+Attribute will not push the Message length above the 160 Character Limit.
+
+### 5.7.0 Recipient Attributes & Surveys
+
+**Recipient Attributes** allow you to get specific details about particular **Recipients**
+automatically as that Recipient takes a Survey, and leverage those details to provide
+them a better experience and yourself with more information.
+Every Recipient in a particular **Cohort** has the same set of Recipient Attributes,
+but each Recipient may have different value for that Attribute. Furthermore, each Recipient
+Attribute has a **Default Value** set at time of creation which serves as the Attribute
+value for any Recipient on the Cohort who has not had the Attribute explicitly set. These
+values can then be check, and set, by Surveys to guide the course of questioning.
+
+#### 5.7.1 Creating Recipient Attributes
+
+In order to create a Recipient Attribute from the **Survey Builder** Page, hover over
+the Dropdown labeled **Actions**, directly below the Instant Census logo in the
+**Navigation Bar**. Then, in the menu that appears, click on the **Add Recipient Attribute**
+Button. This will launch a Popup using which you can create the Recipient Attribute.
+If you decide against creating a new Recipient Attribute, simply click the **X** in the top
+right of the Popup, or the Cancel Button in the bottom left.
+
+* In the Name field put the Name of the Attribute. This is the label under which the
+  Attribute will be listed in the Recipient Table. Each Recipient Attribute must have a unique
+  name, so make sure this value is not shared by any existing Attributes.
+* In the Default Value field, put the value you want the attribute to have by default.
+  Any Recipients already in the system when you create this Recipient Attribute will automatically
+  have the Default Value as their value for this Attribute. Any Recipients created subsequently
+  will automatically have this assigned as their value for this Attribute.
+  
+Once you are satisfied with the Name and Default Value of the Recipient Attribute, clicking
+**Add Recipient Attribute** at the bottom right of the Popup will create an attribute
+with that name, and assign the Default Value to all existing Recipients.
+
+#### 5.7.2 Using Recipient Attributes in Survey Logic
+
+Once you have a set of **Recipient Attributes**, you may use them to help hone your Surveys.
+This is done with the two non-Message-sending Item Types, the **Conditional** and
+**Set Attribute**.
+
+* Conditionals allow you to create subsets of a **Schedule** which only occur if
+  a certain Recipient Attribute has a particular value for a Recipient. This can allow you
+  to skip portions of a Survey that are not relevant to certain people. By automatically
+  skipping Questions and Messages that don't apply to particular people, you can
+  keep them answering the Questions that are of maximum value to you as a researcher.
+* Set Attributes allow you to dynamically set the value of Recipient Attributes based
+  on Recipient behavior within a Survey. This is how you can set the details you have 
+  gleaned about Recipients and make them available for later reference.
+  
+Combining these two Items allows you to create an adaptive, automated Survey for
+your Recipients. By Setting Attributes ahead of time and planning conditionals carefully,
+you can automatically have a Recipient take a Survey that takes into account not just
+how they just answered the immediate Question, but how they have responded to other
+Questions in the past.
+
+#### 5.7.3 Inserting Recipient Attributes into Messages
+
+The value of **Recipient Attributes** can also be inserted directly into Messages sent
+to Recipients, creating communications that have a more personalized feel than conventional
+automated SMS services. 
+
+To add a Recipient Attribute to the text of a Message, simply enclose the Attribute in 
+double square brackets. So, for example, if you wanted to send a greeting message
+using a Recipient's name (which you already have as a Recipient Attribute), you would write
+the Message's text as "Greetings, [[Name]]". When the text is sent out to each Recipient,
+Instant Census will automatically match the contents of the brackets to the Recipient
+Attribute of the same name for that Recipient. If a Recipient does not have their own value
+for that particular attribute, the Default will be used instead. Bear in mind that
+the contents of the brackets must match the desired Recipient Attribute *exactly* (it
+*is* case sensitive). If you attempt to insert a Recipient Attribute that does not exist,
+an error will occur.
+
+You may add such an insertion either when you first create the **Question** or
+**Message**, or through any subsequent edit. However, when adding Recipient Attributes
+to the body of a Message, you should be careful about the length of the value. If,
+when the Message is about to be sent, the addition of a Recipient Attribute would make
+the length of the Message greater than 160 characters, that Message will be split
+into multiple Messages. This can lead to problems, since the nature of SMS means
+that there is no guarantee the first Message sent out will be the first received.
+Thus, your Recipient could end up with a jumbled and incomprehensible Message.
+
+## 6.0.0 Inbox
+
+The **Inbox** Page allows you to see the Messages **Recipients** your deployment
+is configured to flag as needing review. To reach this page, click on the **Needs
+Review** tab in the **Navigation Bar**. If there is a number directly to the right
+of this tab, it indicates the current number of unhandled Messages.
+
+The unhandled Messages Page is broken down by **Cohort**. For each Cohort, a number
+of important pieces of information are displayed.
+
+* The **Recipients (Total)** indicates the total number of Recipients on the Cohort.
+* The **Recipients (Active)** indicates the number of active Recipients on the Cohort.
+* **Recipients (Inbox)** indicates the total number of Recipients with unhandled
+  Messages in that Cohort.
+* **Desired Area Code** indicates the desired area code, if any, of the Phone Number
+  from which Messages will be sent out to Recipients.
+* **Numbers** indicates the Phone Numbers dedicated to sending Messages to Recipients
+  on this Cohort.
+* To the right of this, there will be a list of Recipients with unhandled Messages. If
+  you click on any of these Recipients' Phone Numbers, you will be taken to that Recipient's
+  **Message Sender** Page. From there, you can see the text of the Unhandled Message,
+  and if you wish send a Message back to that Recipient manually.
+
+For more information about what Messages your deployment is configured to flag for review,
+contact [support@instantcensus.com](mailto:support@instantcensus.com).
+  
+## 7.0.0 Data
+
+To assist you in getting the most out of your Surveys, Instant Census comes packaged
+with Data tools to help you see how your **Recipients** are responding, in virtually
+real time. 
+
+### 7.1.0 Message Data
+
+The first graph on this page is the **Text Messages Sent and Received** graph. It breaks down
+the number of messages used by the system, both sent and received. The Box to the 
+right allows you to change the timeframe over which you are viewing system usage. 
+By clicking the appropriate buttons, you can change the graph to display messages 
+sent over the course of the past hour, day, month, or year. Clicking any of these 
+buttons automatically updates the graph to show information for that time period.
+Note that this tracks Messages as designated by Instant Census, not actual SMS messages
+sent. As a result, a single Instant Census Message might span several SMS messages.
+
+### 7.2.0 Recipient Attributes Data
+
+The second graph on this page is the **Recipient Analytics** graph. It allows you to look
+at the various **Recipient Attributes** for a particular **Cohort**. Much like with Message
+Data, the box to the right of this graph allows you to change the information
+displayed. Changing the Cohort selected from the Cohort dropdown will automatically
+update the graph to show information from the selected Cohort. Changing the Recipient
+Attribute dropdown will allow you to view the values of different Recipient Attributes
+within the selected Cohort. The graph itself is simply a bar graph, which breaks
+down the number of Recipients in the Cohort by the value they have in the particular Recipient
+Attribute.
+
+### 7.3.0 Response Times Report
+
+The third graph on this page is the **Response Times Report** graph. It gives
+you information about how quickly people in a particular Cohort are responding to
+the Surveys you send them. The Box to the right of the graph allows you to configure
+various features of this graph. The Cohort dropdown allows you to select the Cohort
+for which you wish to see data. The four buttons below that allow you to set the
+time period for which you will see the selected Cohort's data. By clicking any of
+them, the graph will automatically update to show response rates and times for the
+selected timeframe.
+
+### 7.4.0 Question/Response Report
+
+The final graph on this page is the **Question/Response Report**. This shows you
+how people responded to a particular Question in a Cohort. The Cohort dropdown above
+the graph lets you select the **Cohort** for which you wish to see information. The 
+**Question** dropdown lets you select the particular Question on that Cohort to
+which you wish to see the responses. The graph will automatically update to show
+all the responses Instant Census has received for that Question, organized in a bar
+graph.
+
+## 8.0.0 Recipients & System Interaction
+
+The tools Instant Census provides can help you construct high quality surveys
+to assess and obtain the information you want from your **Recipients**. But for
+however carefully you plan and build, there are always pitfalls associated with
+the other half of surveying, namely, Recipient responses. This section covers common
+problems in interactions with Recipients, as well as explaining some non-configurable
+pieces of behavior around Recipient Interaction.
+
+### 8.1.0 Pitfalls
+
+There are a number of common problems found in interacting with Recipients, and these
+generally fall into two categories: limitations of SMS as a system, and improper
+Recipient responses.
+
+#### 8.1.1 SMS Limitations
+
+Because of the way SMS works, there is the inherent possibility for certain problems
+in the sending and receiving of Messages. In particular, there is no guarantee that
+a Message will be delivered. While most Messages are delivered, there is always
+a chance that Message will simply be dropped, and not reach its intended recipient.
+While this is unusual, it will happen, and the more **Recipients** you have and the more
+Messages you send, the more likely it is that Messages will be dropped. As a result,
+Instant Census can only attempt to send Messages, but cannot guarantee that they
+will be received.
+
+In a similar vein, if multiple Messages are sent in a row, there is no way to guarantee
+that the Messages will be received by the Recipient in the order they were sent out.
+In the event that a series of Messages are sent out in an unexpected order, this
+can lead to confusion on the part of the Recipient and lead in to improper Recipient responses,
+as described below.
+
+There are a few steps you can take when constructing a Survey that can help ameliorate
+the situations above. 
+
+* Try not to send multiple Messages in a row. This means not following a **Message** 
+  with a **Question** or another Message unless you absolutely must. Slightly trickier 
+  is making sure that a single Message does not end up being longer than 160 characters.
+  While Instant Census prohibits you from creating a Message of such length, it is
+  possible for a Message to exceed this limit. This is particularly likely to happen
+  if you are inserting an especially long **Recipient Attribute** value into a text, or
+  automatically appending an especially long set of **Multiple Choice** Answers to
+  a Message. While it can be difficult to predict exactly how long Messages processed 
+  in these ways will be, it is generally a good idea to make sure the base Message
+  is much shorter than 160 characters.
+* Make sure your Messages make sense out of context. This is a good idea anyway,
+  given resend behaviors, but it is harder for a mis-ordering of texts to confuse
+  a Recipient if each Message is intelligible in and of itself.
+
+#### 8.1.2 Improper Recipient Responses
+
+Since you cannot control how **Recipients** will respond to your Surveys, they can create
+no end of trouble by acting in a way you do not expect. Generally, these problematic
+responses will be categorized as Unhandled Responses, and made available for viewing.
+However, it is possible for Improper Recipient Responses to lead to odd behavior. If,
+for example, a Recipient is responding to one Question when another is sent, then Instant
+Census will interpret their response as being to that of the *second* Question.
+It is possible to minimize the chances of these responses, however.
+
+* Space out **Schedules** and **Resends**. Because of the way Schedules and Resends
+  interact with ongoing Schedules, it is important to make sure a Message is unlikely
+  to send when a Recipient is already responding to a different Question. Put a few hours
+  at least between the times Schedules are sent out, and make sure Resends are similarly
+  spaced out from other Messages.
+* Use **Messages** sparingly. People often feel the need to respond to every text
+  message they receive, even if it is just to acknowledge that they have received
+  the message. Sending fewer Messages gives Recipients fewer opportunities to do this.
+* Word Messages in such a way that it is clear they do not expect a response. Since
+  you are sending a Survey, Recipients may be overly likely to construe communications
+  as **Questions**. Word those Messages you must send in such a way that it is absolutely
+  clear they are *not* looking for a response from the Recipient.
+* Word Questions in such a way that possible responses are clear. If you are asking
+  a **Yes/No**, **Multiple Choice**, or **Numeric** Question, there are a finite
+  number of responses Instant Census will accept from your Recipients. Thus, make sure
+  the Question clearly prompts for those responses. For Multiple Choice Questions,
+  Instant Census can automatically append a list of choices to the Message; use
+  this. Make sure range of Numeric responses is clearly given in the Question, and
+  word Yes/No Questions in a way that clearly elicits a Yes/No response.
+* Be careful when selecting Multiple Choice responses. Since Recipients must match the
+  text of a Multiple Choice exactly to be parsed correctly, you must be very careful
+  in wording these choices. While you *can* create multi-word Choices, you should
+  probably do so *very* sparingly, and not make the possible responses be more than
+  two or three words long. Also, try to make the responses shorter, easily spelled
+  words.
+  
+While it is certain that some Recipients will misinterpret and misuse the system, but
+wording your communications in the right way can help minimize that possibility.
+
+### 8.2.0 System Behaviors
+
+While they are not problematic per se, there are some inherent behaviors of Instant
+Census with regard to **Recipient** interaction that can be surprising if you do not
+expect them.
+
+#### 8.2.1 Recipient Control
+
+There are three Messages a **Recipient** can send in that, instead of being handled in the
+normal fashion, instead let them control their experience of Instant Census. These
+are built into the system, and cannot be changed or configured by an administrator.
+
+* If a Recipient texts in the Message "Stop", then their **Status** is set to **Disabled**,
+  and they cannot be sent any more Messages by Instant Census. No further communication 
+  with the Recipient will be possible, unless the Recipient makes it so.
+* If a Recipient texts in the Message "Start" while their Status is **Disabled** or **Inactive**
+  then their Status will change to **Active** and they will immediately be sent
+  a Message indicating that their Status has been successfully changed.
+* If a Recipient texts in the Message "Skip" while they have an outstanding **Question**,
+  then the Schedule will continue past that Question without requiring an answer
+  from the Recipient.
+
+Furthermore, If a Recipient sends in the Message "Stopall", "Unsubscribe", "Cancel", 
+"End", or "Quit" they will be sent a Message indicating that if they wish to stop 
+receiving Messages from Instant Census, they should send back the Message "Stop".
+
+Similarly, if the Recipient sends in "Help" or "Info", they will be sent a Message indicating
+that normal rates and fees apply, and reminding them that they can text "Stop" to
+stop receiving Messages from Instant Census.
+
+As a result of their special role in the system, the words "Start", "Stop", and
+"Skip" cannot be used as the answer to **Multiple Choice** Questions. Furthermore,
+you should not put a Recipient in a situation where one of these words is a possible
+answer to a Question, since the system will not accept any of these words as a Recipient
+response to a Question.
+
+#### 8.2.2 System Messages
+
+There are a number of situations in which Instant Census will automatically send
+Messages to **Recipients**. Most of these have to do with changes in the **Status** of
+either the Recipient or the **Cohort** to which they belong. 
+
+* As soon as a Recipient becomes eligible to receive Messages (that is, both the Recipient's 
+  and the Cohort's Status are **Active**) for the first time, the Recipient is
+  sent the Cohort's **Welcome Message**. This Message includes an element you can
+  configure, as well as required content telling them how to opt-out of Instant
+  Census and that normal messaging rates apply.
+* When a Cohort becomes **Paused**, all Active Recipients on that Cohort are automatically
+  sent a Message informing them of this change.
+* When a Cohort becomes Active, all Active Recipients on that Cohort are automatically 
+  sent a Message letting them know to expect to start receiving more Messages, and
+  reiterating how they can opt-out.
+* When a Recipient becomes **Inactive**, they are sent a Message telling them they are
+  inactive and indicating they should text in "Start" to resume receiving Messages.
+* When a Recipient becomes **Paused**, if their Cohort is Active, they are sent a Message
+  letting them know they have been paused.
+* When a Recipient is set to Active, if their Cohort is also Active, they are sent a
+  Message letting them know to expect to receive Messages again. If their Cohort
+  is Paused, but they initiated the reactivation through sending in "Start", they
+  will be told that they have been reactivated, but the system is not currently
+  sending messages, and that they will be notified when it resumes.
+  
+Additionally, you may set Cohorts to resend Questions if Instant Census receives
+an improper response from the Recipient. If you select this, then the Recipient will automatically
+receive a Message informing them that Instant Census couldn't understand their answer,
+and prompting them to respond again.
+
+If a Recipient sends in the Message "Stopall", "Unsubscribe", "Cancel", "End", or "Quit"
+they will be sent a Message indicating that if they wish to stop receiving Messages
+from Instant Census, they should send back the Message "Stop".
+
+Similarly, if the Recipient sends in "Help" or "Info", they will be sent a Message indicating
+that normal rates and fees apply, and reminding them that they can text "Stop" to
+stop receiving Messages from Instant Census.
+
+Finally, Instant Census will automatically send Recipients a Message with the Phone Number
+of the National Suicide Prevention Lifeline if it thinks the Recipient has sent in a
+Message indicating the serious risk of suicide.
+
+#### 8.2.3 Emergency Responses
+
+When Instant Census is employed properly, some **Recipients** may not understand that
+they are interacting with an automated system and not a real person. While this
+has certain advantages, in that it makes people more likely to respond and more
+likely to respond casually and honestly, it can lead to some problems. In particular,
+Instant Census is not equipped to help people handle medical emergencies.
+
+While Instant Census attempts to detect Messages that may indicate suicidal intent,
+it can only respond by sending the Recipient information on the National Suicide Prevention
+Lifeline.
+
+Furthermore, the ways in which someone could ask for other medical aid are too
+varied for Instant Census to keep track of. As a result, the system cannot recommend
+any kind of medical advice, nor can it contact emergency services for the Recipient.
+
+Messages the Recipient sends in asking for medical help of any kind will be counted as
+unhandled Messages and will appear in the **Inbox** Page. For this reason, it
+is important that you keep on top of unhandled Recipient responses. It is also important
+that you, when onboarding Recipients, make clear to them that Instant Census is an automatic
+system and that it *cannot* summon medical aid or emergency services.
+
+#### 8.2.4 Forbidden Words
+
+Because of the methods Instant Census gives to **Recipients** to help them manage their
+experience of the system, certain words are reserved for Recipients to send the system
+in order to get it to do something. This means that, when a Recipient sends in one of
+these words, instead of being handled normally, the system takes it and decides what
+to do with it. As a result, these words cannot be designated as Choices in **Multiple
+Choice Questions**. You should also take care that any **Open-Ended** or other Questions
+do not attempt to solicit these words as responses. If they do, then your Survey
+will not work as expected, since these words interact with the system outside the
+normal logic of Surveys.
+
+The **Forbidden Words** are: "stop", "stopall", "unsubscribe", "cancel", "end", 
+"quit", "skip", "", "ping", "start", "help", and "info".
+
+If a Recipient sends in any one of these words, they will not interact with the logic
+of whatever Survey in which they may be participating. Instant Census automatically
+deals with the words in a different fashion.
+
+## 9.0.0 Your Account
+
+Much of the salient information about your account can be found at the top of the
+**Cohorts** page. This summarizes how many texts you have used, how many texts you
+have remaining, and when your texts expire. Other details about your account will
+have been given to you by Instant Census, and can be re-sent upon request.
+
+### 9.1.0 System Requirements
+
+In order to utilize Instant Census, you must have a computer, an internet connection,
+and a browser. For best results, we recommend you use Google Chrome to access the
+Instant Census web application. Because Instant Census relies on a web application
+to allow you to use the system, your experience will be dependent upon the speed
+of your internet connection. We can make no guarantee as to the speed with which
+you will be able to undertake any of the actions described in this documentation.
+
+Furthermore, your **Recipients** must have access to cell phones which are equipped to 
+send and receive SMS Messages. It is entirely the responsibility of the Recipient to
+have access to this service, and they may be charged for exchanging communications
+with Instant Census depending on their wireless plan. Because the Messages are deployed
+over SMS, Instant Census cannot guarantee that Messages will be sent in the correct
+order, that Messages will be received by the Recipient, and that Messages sent by the 
+Recipient will be received. Recipients' experience with Instant Census will be dependent on
+their wireless plans, as well as the quality of service in their areas. Wireless
+coverage is by no means universal in the United States, and some Recipients may find
+themselves in areas not covered by wireless service. Such Recipients will be unable to
+interact with Instant Census properly.
+
+At this time, Instant Census only supports sending and receiving Messages within
+the United States. The Instant Census service is not designed, nor has it approved,
+for usage in countries other than the USA. Any attempts to send Messages to non-US
+Phone Numbers is highly discouraged, and Instant Census will actively take measures to
+prevent such usage of Instant Census.
+
+### 9.2.0 Security
+
+In order to access the Instant Census web application, you will need to have your own
+log in credentials that will allow you to access all of the features
+of the web application. You are solely responsible for guarding the security of
+these, and in the event that you allow them to fall into malicious hands, Instant Census
+can make no guarantees as to the security of your data or the usage of your deployment
+of Instant Census. By necessity anyone who has access to your login credentials
+has access to any and all of your data, even confidential data about your **Recipients**.
+It is thus advisable that you log out of Instant Census when you are done using it.
+Failure to do so could leave Instant Census accessible to anyone who happens to
+encounter your computer. To logout, click the Button at the far right of the
+**Navigation Bar**. Instant Census will automatically log you out after 24 hours.
+
+To reset your password, click the **Forgot Password?** link at the bottom of the
+login page. This will take you to a new page prompting you to enter your email address.
+This must be the same as the email address you have associated with your account. 
+Upon submitting your email, Instant Census will check to see if there is an Administrator
+with that email address. If there is, that email address will be sent an email allowing
+you to reset your password. As a consequence of this, anyone who gains unauthorized
+access to your email account can theoretically gain access to your Instant Census
+Account. Zagaran is not responsible for the security of your email address, and you
+bear all responsibility for unauthorized use of your Instant Census deployment as
+a result of a breach in your email security.
+
+All data received by Instant Census from **Recipients** are stored in firewall-protected 
+servers. These servers can be accessed only through an SSH using 2048 bit RSA, and 
+access to these servers beyond your login credentials is restricted to authorized 
+employees of Instant Census only. Furthermore, all data received by Instant Census 
+are stored on servers dedicated to that deployment and that deployment only, to 
+minimize the risk of accidental interchange. The employees given access are carefully 
+vetted, and access is restricted to the absolute minimum required for the successful 
+functioning of the project. Even so, any data kept by Instant Census for internal 
+company use after the term of the contract is fully anonymized.
+
+Instant Census only shares data with outside parties when this is specifically
+required by law, and strict procedures are followed in allowing these parties access.
+
+It is, however, worth noting that while Instant Census does its best to maintain security 
+during data storage and processing, there are certain inherent vulnerabilities, 
+particularly on the Recipients' and researchers' ends. SMS is not a secure communication 
+medium, and anyone who has access to a Recipient's phone has the possibility to see that 
+Recipient's responses. Instant Census cannot speak for the care with which a Recipient will 
+treat their data, and there is no guarantee that the Recipient will password protect 
+their phone or regularly delete their SMS history.
+
+It may also be possible for third parties to access data once it has been received 
+by you. Much like in the case of the participant, Instant Census cannot control 
+your security practices. Thus, Instant Census cannot make any guarantees about the 
+security of data once you have accessed it and stored it on any of your own devices
+and systems. Having said that, we are certainly willing to discuss proper security
+practices with you beforehand to help you make the best choices about how to protect 
+your data.
+
+Furthermore, Zagaran is not responsible for any malicious code that may enter the
+system through either you or your Recipients. While Zagaran attempts to properly sanitize
+any incoming messages or items added to the system to prevent the entry of malicious
+code, this process is not and cannot be foolproof. Zagaran cannot control how you
+or your Recipients utilize the system, or the content added to the system by the same.
+
+Instant Census's data protection and security policies are rigorously enforced by 
+the company at all times and in all places.
+
+### 9.3.0 Billing
+
+For a comprehensive view of the cost structure of your deployment of Instant Census,
+consult the agreement you made with Instant Census. This is the only source for the costs
+you will incur when using Instant Census, and any other agreements, either verbally
+or in writing are superseded by that agreement.
+
+Bear in mind that for the purposes of costs and billing, Messages includes not just
+Messages sent out *from* Instant Census but also messages sent in *to* Instant Census.
+While you can control the former, the latter is entirely in the hands of your **Recipients**
+who may send in as many Messages as they see fit. Instant Census does not and cannot
+prevent Recipients from sending Messages in to Instant Census, and bears no responsibility
+for the number of Messages sent in by your Recipients. Thus, it is important to keep
+track of Message Usage on the **Cohorts** Page.
+
+In the event that you equal or exceed your Message allotment for a given billing
+period, your usage of Instant Census will be curtailed. Instant Census will make a good
+faith effort to inform you in advance when this is about to happen, and give you
+every opportunity to increase your Message capacity. However, given that Instant Census
+cannot control the speed and frequency with which Messages are used, it may be
+impossible to give you warning. In any event, your ability to send new Messages
+will be suspended, and new Messages sent in by your Recipients will be ignored. As soon
+as your Message capacity increases, your usage of Instant Census will be able to
+resume as normal.
+
+Note that there may be a slight discrepency between your message usage as displayed
+by the various data reports and the number of messages for which you are billed.
+This is due to Instant Census not tracking messages in 160-character chunks, while
+you are billed on the basis of actual SMS messages sent and received. If you
+send messages longer than 160 characters, your billable messages will be higher than
+your messages as displayed by Instant Census data reports.
+
+You may, at any time, increase your Message capacity. Simply contact your Instant
+Census sales representative, or email [sales@instantcensus.com](mailto:sales@instantcensus.com).  
+<br />
+<br />
+<br />
+
+<!--## Customer docs go here.
+
+## Docs should discuss:
+* Each of the different types of schedules
+* Each of the different actions
+* Sample survey
+* Resends based on non response
+* Resends based on bad answer
+* How conditionals work
+* What is a Recipient attribute
+* What happens when you set Recipient attributes based on an answer
+* Why the actions available off of a question are different from those available
+off of a conditional or schedule and where you click to have a non-conditional next question.
+
+## Docs should note:
+* Message delivery is not guaranteed.
+* Order of messages is not guaranteed.
+* Poorly timed Recipient responses or multiple texts from a Recipient can lead to odd behavior
+-->
+{% endfilter %}
+</div>
+{% endblock content %}

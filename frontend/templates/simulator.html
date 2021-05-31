@@ -1,0 +1,148 @@
+{%extends "base.html"%}
+
+{%block title%}Simulator | Instant Census{%endblock%}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="/static/css/simulator.css">
+{% endblock %}
+
+{%block actions %}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="box3 lightgrey longer" style="height:1024px;width:100%;position:relative;z-index:10;">
+            <div class="phone-case">
+                <div id="background">
+                    <div id="conversation">
+                        {%for text in user.all_messages() %}
+                            {%if text['incoming'] == True %}
+                                <div class="gBoxTall">
+                                    <div class="right">
+                                        <p class="message">{{ text["text"] }}<br />
+                                            <span class="hint" style="font-size:12px">
+                                                {{ text["time"].strftime("%h %d, %H:%M")}}</span>
+                                        </p>
+                                    </div>
+                                    <div class="bottom">
+                                        <div class="right"></div>
+                                    </div>
+                                </div>
+                            {%else%}
+                                <div class="wBoxTall">
+                                    <div class="left">
+                                        <p class="message">{{ text["text"] }}<br />
+                                            <span class="hint" style="font-size:12px">
+                                                {{ text["time"].strftime("%h %d, %H:%M") }}</span>
+                                        </p>
+                                    </div>
+                                    <div class="bottom">
+                                        <div class="left"></div>
+                                    </div>
+                                </div>
+                            {%endif%}
+                        {%endfor%}
+                    </div>
+                </div>
+            </div>
+            <div style="position:absolute;right:0;top:0;margin-right:50px;width:25%;">
+                <p class="alert alert-warning">HI! I WORK IN UTC TIME!</p>
+                <p>
+                    {% autoescape false %}{{ calendar }}{% endautoescape %}
+                    <span style="background:red">hour: {{ hour }}</span>
+                    <br /><br />
+                    <form method="POST" action="/simulator" id="next-day-form" style="display:inline">
+                        <input type="hidden" name="next_day" id="next_day" value="next_day" />
+                        <input type="submit" value="Next day" />
+                    </form>
+                    &nbsp;
+                    <form method="POST" action="/simulator" id="next-hour-form" style="display:inline">
+                        <input type="hidden" name="next_hour" id="next_hour" value="next_hour" />
+                        <input type="submit" value="Next hour" />
+                    </form>
+                    <br /><br />
+                    <form method="POST" action="/simulator" id="onboard-user-form" style="display:inline">
+                        <input type="hidden" name="onboard_user" id="onboard_user" value="onboard_user" />
+                        <input type="submit" value="Onboard User (hit 'On User Creation')" />
+                    </form>
+                    <br /><br />
+                    <form method="POST" action="/simulator" id="end-sim-form" style="display:inline">
+                        <input type="hidden" name="end_sim" id="end_sim" value="end_sim" />
+                        <input type="submit" value="Reset (delete msgs from database)" />
+                    </form>
+                </p>
+                <p>
+                    User info
+                    <br />
+                    status: {{ user.status }}
+                    <br />
+                    cohort: {{ user.cohort_id }}
+                    <br />
+                    active schedule: {{ user.current_execution }}
+                    <br />
+                    attributes: {{ user.custom_attributes }}
+                </p>
+                <p>
+                    Common responses (click to send)
+                    <br />
+                    <input type="button" class="common-response" value="yes"
+                        onClick="javascript:do_send('yes');"/>
+                    &nbsp;
+                    <input type="button" class="common-response" value="no"
+                        onClick="javascript:do_send('no');"/>
+                    <br />
+                    <input type="button" class="common-response" value="1"
+                        onClick="javascript:do_send('1');"/>
+                    &nbsp;
+                    <input type="button" class="common-response" value="5"
+                        onClick="javascript:do_send('5');"/>
+                    &nbsp;
+                    <input type="button" class="common-response" value="10"
+                        onClick="javascript:do_send('10');"/>
+                    <br />
+                    <input type="button" class="common-response" value="junk"
+                        onClick="javascript:do_send('junk');"/>
+                    &nbsp;
+                    <input type="button" class="common-response" value="ping"
+                        onClick="javascript:do_send('ping');"/>
+                    &nbsp;
+                    <input type="button" class="common-response" value="skip"
+                        onclick="javascript:do_send('skip');">
+
+                </p>
+            </div>
+            <div style="position:absolute;left:64px;bottom:183px;">
+                <form id='sendmessage-form' class='center' action="javascript:send_message();">
+                    <input type='text' id='message'
+                        style="background-color:black;text-align:left;width:361px;height:52px;border-style:none;color:#FFFFFF;font-size:18px">
+                    <input type='submit' id='send_text' value=''
+                        style="margin-left:5px;background-color:transparent;width:85px;height:52px;cursor:pointer;border-style:none;">
+                </form>
+            </div>
+        </div>
+        <div class="well">
+            Schedules: {{ schedule_executions }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="/static/javascript/simulator.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            $("#conversation").scrollTop($("#conversation")[0].scrollHeight);
+            $(".month td").filter(function() {
+                return $(this).html() == "{{ day_of_month }}";
+            }).css("background", "red");
+
+            $("#home").on("submit", "#sendmessage-form", function(e) {
+                e.preventDefault();
+                send_message();
+            });
+
+            $("#home").on("click", ".common-response", function(e) {
+                $("#message").val($(this).val());
+                $("#sendmessage-form").submit();
+            });
+        });
+    </script>
+{%endblock%}

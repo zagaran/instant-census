@@ -1,0 +1,19 @@
+<!-- mark as cohort as completed confirmation modal -->
+{% from "base.html" import generate_modal %}
+{% call generate_modal("mark-cohort-completed-modal-%s" % cohort["_id"],
+                       "Mark Cohort As Completed Confirmation",
+                       "/complete/%s" % cohort["_id"],
+                       "",
+                       "Yes, Mark Cohort As Completed",
+                       "_none",
+                       "",
+                      ) %}
+    <p>Are you sure you want to mark Cohort "{{ cohort["cohort_name"] }}" as completed?</p>
+    <div class="alert alert-warning">
+        <p>
+            <b>WARNING:</b> This will PERMANENTLY deactivate all of this cohort's surveys and users and render
+            its phone numbers non-operational. However, this cohort's data will still exist here for your perusal.
+            As a result of deactivation, this cohort will no longer be billed.
+        </p>
+    </div>
+{% endcall %}
